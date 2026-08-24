@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+package submissions.v1;
+
+option go_package = "github.com/markgredasov/viewcode-submissions/pkg/api/submissions/v1;submissions_v1";
+
+service SubmissionsService {
+    rpc Create(CreateRequest) returns (CreateResponse);
+}
+
+enum SubmissionStatus {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_RUNNING = 2;
+    STATUS_ACCEPTED = 3;
+    STATUS_WRONG_ANSWER = 4;
+    STATUS_TIMEOUT = 5;
+    STATUS_INTERNAL = 6;
+}
+
+enum Language {
+    LANGUAGE_UNSPECIFIED = 0;
+    LANGUAGE_GO = 1;
+    LANGUAGE_PYTHON = 2;
+    LANGUAGE_JAVA = 3;
+    LANGUAGE_CPP = 4;
+    LANGUAGE_JAVA_SCRIPT = 5;
+    LANGUAGE_TYPE_SCRIPT = 6;
+    LANGUAGE_CSHARP = 7;
+    LANGUAGE_KOTLIN = 8;
+    LANGUAGE_SWIFT = 9;
+    LANGUAGE_RUST = 10;
+}
+
+message Submission {
+    string id = 1 [
+        (validate.rules).string.uuid = true
+    ];
+
+    string user_id = 2 [
+        (validate.rules).string.uuid = true
+    ];
+
+    string problem_id = 3 [
+        (validate.rules).string.uuid = true
+    ];
+
+    int32 tests_total = 4;
+
+    int32 tests_passed = 5;
+
+    SubmissionStatus status = 6 [
+        (validate.rules).enum = {not_in: [0]}
+    ];
+
+    Language language = 7 [
+        (validate.rules).enum = {not_in: [0]}
+    ];
+
+    int32 execution_time_ms = 8;
+
+    google.protobuf.Timestamp created_at = 9;
+}
+
+message CreateRequest {
+    string user_id = 1 [
+        (validate.rules).string.uuid = true
+    ];
+
+    string problem_id = 2 [
+        (validate.rules).string.uuid = true
+    ];
+
+    int32 tests_total = 3;
+
+    int32 tests_passed = 4;
+
+    SubmissionStatus status = 5 [
+        (validate.rules).enum = {not_in: [0]}
+    ];
+
+    Language language = 6 [
+        (validate.rules).enum = {not_in: [0]}
+    ];
+
+    int32 execution_time_ms = 7;
+}
+
+message CreateResponse {
+    Submission submission = 1;
+}
