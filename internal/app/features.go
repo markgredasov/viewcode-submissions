@@ -2,7 +2,9 @@ package app
 
 import (
 	submissionshandler "github.com/markgredasov/viewcode-submissions/internal/handler/submissions"
+	submissionsrepository "github.com/markgredasov/viewcode-submissions/internal/repository/submissions"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/registry"
+	submissionsservice "github.com/markgredasov/viewcode-submissions/internal/service/submissions"
 )
 
 func (a *App) initFeatures() *registry.Registry {
@@ -16,7 +18,9 @@ func (a *App) initFeatures() *registry.Registry {
 }
 
 func (a *App) initFeatureSubmissions() registry.RegisterFunc {
-	handler := submissionshandler.New(nil)
+	repository := submissionsrepository.New(a.pool)
+	service := submissionsservice.New(repository)
+	handler := submissionshandler.New(service)
 
 	return handler.Register()
 }

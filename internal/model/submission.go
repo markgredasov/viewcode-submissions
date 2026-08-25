@@ -58,3 +58,8 @@ func NewSubmission(
 		CreatedAt:         createdAt,
 	}, nil
 }
+
+func (s *Submission) WithID(id UUID) *Submission {
+	s.ID = id
+	return s
+}

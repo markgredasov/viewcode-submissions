@@ -35,7 +35,9 @@ func (g *GRPCServer) RegisterServices(registerFunc func(*grpc.Server)) {
 }
 
 func (g *GRPCServer) Run(ctx context.Context) error {
-	listener, err := net.Listen("tcp", g.config.Address)
+	listenConfig := net.ListenConfig{}
+
+	listener, err := listenConfig.Listen(ctx, "tcp", g.config.Address)
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
 	}
@@ -53,7 +55,7 @@ func (g *GRPCServer) Run(ctx context.Context) error {
 			zap.String("address", g.config.Address),
 		)
 
-		err := g.server.Serve(listener)
+		err = g.server.Serve(listener)
 
 		if !errors.Is(err, grpc.ErrServerStopped) {
 			ch <- err
@@ -61,7 +63,7 @@ func (g *GRPCServer) Run(ctx context.Context) error {
 	}()
 
 	select {
-	case err := <-ch:
+	case err = <-ch:
 		return fmt.Errorf("serve gRPC server: %w", err)
 	case <-ctx.Done():
 		g.log.Warn("shutdown gRPC server")
