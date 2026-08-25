@@ -2,13 +2,21 @@ package app
 
 import (
 	submissionshandler "github.com/markgredasov/viewcode-submissions/internal/handler/submissions"
-	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/registry"
 )
 
-func (a *App) initFeatures() ([]server_grpc.ServiceRegistrar, error) {
-	registrars := []server_grpc.ServiceRegistrar{
-		submissionshandler.NewRegistrar(nil),
-	}
+func (a *App) initFeatures() *registry.Registry {
+	reg := registry.New()
 
-	return registrars, nil
+	reg.Add(
+		a.initFeatureSubmissions(),
+	)
+
+	return reg
+}
+
+func (a *App) initFeatureSubmissions() registry.RegisterFunc {
+	handler := submissionshandler.New(nil)
+
+	return handler.Register()
 }

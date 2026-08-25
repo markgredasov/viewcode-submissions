@@ -39,13 +39,10 @@ func (a *App) Run() error {
 	}
 
 	a.logger.Debug("initializing features")
-	routes, err := a.initFeatures()
-	if err != nil {
-		a.logger.Fatal("initialize features", zap.Error(err))
-	}
+	registry := a.initFeatures()
 
 	a.logger.Debug("initializing gRPC server")
-	a.initGRPCServer(routes)
+	a.initGRPCServer(registry)
 
 	return a.server.Run(a.ctx)
 }

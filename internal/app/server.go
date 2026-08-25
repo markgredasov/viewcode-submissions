@@ -1,20 +1,18 @@
 package app
 
 import (
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/registry"
 	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
-	"google.golang.org/grpc"
 )
 
-func (a *App) initGRPCServer(registrars []server_grpc.ServiceRegistrar) {
+func (a *App) initGRPCServer(reg *registry.Registry) {
 	serverConfig := server_grpc.NewConfigMust()
 	server := server_grpc.NewGRPCServer(
 		serverConfig,
 		a.logger,
 	)
 
-	server.RegisterServices(func(s *grpc.Server) {
-		server_grpc.RegisterServices(s, registrars...)
-	})
+	server.RegisterServices(reg.RegisterAll)
 
 	a.server = server
 }
