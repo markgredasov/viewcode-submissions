@@ -1,24 +1,20 @@
 package app
 
 import (
-	"github.com/markgredasov/viewcode-submissions/internal/server/http/middleware"
-	server_http "github.com/markgredasov/viewcode-submissions/internal/server/http/server"
+	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
+	"google.golang.org/grpc"
 )
 
-func (a *App) initHTTPServer(routes []server_http.Route) {
-	apiVersion1Router := server_http.NewAPIVersionRouter(server_http.APIVersion1)
-	apiVersion1Router.RegisterRoutes(routes...)
-
-	serverConfig := server_http.NewConfigMust()
-	server := server_http.NewHTTPServer(
+func (a *App) initGRPCServer(registrars []server_grpc.ServiceRegistrar) {
+	serverConfig := server_grpc.NewConfigMust()
+	server := server_grpc.NewGRPCServer(
 		serverConfig,
 		a.logger,
-		middleware.RequestID(),
-		middleware.Logger(a.logger),
-		middleware.Recovery(),
-		middleware.Trace(),
-		middleware.CORS(),
 	)
-	server.RegisterAPIRouters(apiVersion1Router)
+
+	server.RegisterServices(func(s *grpc.Server) {
+		server_grpc.RegisterServices(s, registrars...)
+	})
+
 	a.server = server
 }

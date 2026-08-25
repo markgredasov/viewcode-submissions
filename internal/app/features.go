@@ -1,21 +1,14 @@
 package app
 
 import (
-	server_http "github.com/markgredasov/viewcode-submissions/internal/server/http/server"
+	submissionshandler "github.com/markgredasov/viewcode-submissions/internal/handler/submissions"
+	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
 )
 
-func (a *App) initFeatures() ([]server_http.Route, error) {
-	var routes []server_http.Route
-
-	initFuncs := []func() ([]server_http.Route, error){}
-
-	for _, initFunc := range initFuncs {
-		featureRoutes, err := initFunc()
-		if err != nil {
-			return routes, err
-		}
-		routes = append(routes, featureRoutes...)
+func (a *App) initFeatures() ([]server_grpc.ServiceRegistrar, error) {
+	registrars := []server_grpc.ServiceRegistrar{
+		submissionshandler.NewRegistrar(nil),
 	}
 
-	return routes, nil
+	return registrars, nil
 }

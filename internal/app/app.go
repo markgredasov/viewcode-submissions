@@ -7,7 +7,7 @@ import (
 
 	database_postgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
-	server_http "github.com/markgredasov/viewcode-submissions/internal/server/http/server"
+	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +15,7 @@ type App struct {
 	ctx        context.Context
 	cancelFunc context.CancelFunc
 	logger     *logger.Logger
-	server     *server_http.HTTPServer
+	server     *server_grpc.GRPCServer
 	pool       *database_postgres.ConnectionPool
 }
 
@@ -44,8 +44,8 @@ func (a *App) Run() error {
 		a.logger.Fatal("initialize features", zap.Error(err))
 	}
 
-	a.logger.Debug("initializing HTTP server")
-	a.initHTTPServer(routes)
+	a.logger.Debug("initializing gRPC server")
+	a.initGRPCServer(routes)
 
 	return a.server.Run(a.ctx)
 }

@@ -77,20 +77,5 @@ tasks:
       - docker compose down postgres
 
   proto-gen:
-    requires:
-      vars: [FILEPATH]
     cmds:
-      - |
-        protoc --proto_path=${PROTO_PATH} \
-          --proto_path=${PROTO_VALIDATE} \
-          --go_out=${PROTO_GO_OUT}  \
-          --go_opt=paths=source_relative \
-          --go-grpc_out=${PROTO_GO_GRPC_OUT} \
-          --go-grpc_opt=paths=source_relative \
-          {{.FILEPATH}}
-    env:
-      PROTO_PATH: '{{.PROTO_PATH}}'
-      PROTO_GO_OUT: '{{.PROTO_GO_OUT}}'
-      PROTO_GO_GRPC_OUT: '{{.PROTO_GO_GRPC_OUT}}'
-      PROTO_VALIDATE: '{{.PROJECT_ROOT}}/bin/protoc-gen-validate'
-      
+      - easyp generate
