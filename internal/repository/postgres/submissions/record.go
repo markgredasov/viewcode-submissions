@@ -19,16 +19,8 @@ type record struct {
 }
 
 func fromRecordToModel(r record) (model.Submission, error) {
-	m, err := model.NewSubmission(
-		r.UserID,
-		r.ProblemID,
-		r.TestsTotal,
-		r.TestsPassed,
-		r.Status,
-		r.Language,
-		r.ExecutionTimeInMS,
-		r.CreatedAt,
-	)
+	m, err := model.NewSubmission(r.UserID, r.ProblemID, r.TestsTotal, r.TestsPassed, r.Status,
+		r.Language, r.ExecutionTimeInMS, r.CreatedAt)
 	if err != nil {
 		return model.Submission{}, err
 	}

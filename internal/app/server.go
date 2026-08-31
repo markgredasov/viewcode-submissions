@@ -2,12 +2,12 @@ package app
 
 import (
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/registry"
-	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
+	grpcserver "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
 )
 
 func (a *App) initGRPCServer(reg *registry.Registry) {
-	serverConfig := server_grpc.NewConfigMust()
-	server := server_grpc.NewGRPCServer(
+	serverConfig := grpcserver.NewConfigMust()
+	server := grpcserver.New(
 		serverConfig,
 		a.logger,
 	)

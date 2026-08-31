@@ -6,11 +6,18 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// Config holds logger configuration parameters.
+//
+// Values are loaded from environment variables with the prefix "LOGGER".
 type Config struct {
 	Level  string `envconfig:"LEVEL" required:"true"`
 	Folder string `envconfig:"FOLDER" required:"true"`
 }
 
+// NewConfig loads logger configuration from environment variables.
+//
+// Expects LOGGER_LEVEL and LOGGER_FOLDER to be set.
+// Returns error if variables are missing or cannot be processed.
 func NewConfig() (Config, error) {
 	var config Config
 
@@ -21,6 +28,10 @@ func NewConfig() (Config, error) {
 	return config, nil
 }
 
+// NewConfigMust loads logger configuration and panics on error.
+//
+// Useful for mandatory configuration during application initialization.
+// Panics if environment variables are missing or invalid.
 func NewConfigMust() Config {
 	config, err := NewConfig()
 	if err != nil {

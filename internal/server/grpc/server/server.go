@@ -1,4 +1,4 @@
-package server_grpc
+package grpcserver
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type GRPCServer struct {
 	log    *logger.Logger
 }
 
-func NewGRPCServer(config Config, logger *logger.Logger) *GRPCServer {
+func New(config Config, logger *logger.Logger) *GRPCServer {
 	return &GRPCServer{
 		server: grpc.NewServer(),
 		config: config,

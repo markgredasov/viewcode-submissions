@@ -1,7 +1,7 @@
 package app
 
 import (
-	database_postgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
+	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
 )
 
@@ -17,8 +17,8 @@ func (a *App) initLogger() error {
 }
 
 func (a *App) initPostgresPool() error {
-	databaseConfig := database_postgres.NewConfigMust()
-	postgresPool, err := database_postgres.NewConnectionPool(a.ctx, databaseConfig)
+	databaseConfig := dbpostgres.NewConfigMust()
+	postgresPool, err := dbpostgres.NewConnectionPool(a.ctx, databaseConfig)
 	if err != nil {
 		return err
 	}

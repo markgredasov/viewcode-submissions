@@ -1,3 +1,7 @@
+// Package logger provides a structured logging wrapper around uber-go/zap.
+//
+// It supports logging to both stdout and a file with configurable log levels.
+// The package also includes context-based logger retrieval and graceful shutdown.
 package logger
 
 import (
@@ -11,12 +15,20 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// Logger wraps zap.Logger and manages the underlying log file.
+//
+// It provides structured logging capabilities with caller information
+// and supports both console and file output simultaneously.
 type Logger struct {
 	*zap.Logger
 
-	file *os.File
+	file *os.File // underlying log file handle for cleanup
 }
 
+// FromContext retrieves a Logger instance from the given context.
+//
+// The logger must have been previously stored in the context with the key "logger".
+// If no logger is found, it panics to indicate a programming error.
 func FromContext(ctx context.Context) *Logger {
 	log, ok := ctx.Value("logger").(*Logger)
 	if !ok {
@@ -26,6 +38,11 @@ func FromContext(ctx context.Context) *Logger {
 	return log
 }
 
+// NewLogger creates a new Logger instance with the provided configuration.
+//
+// It sets up both console and file logging with the specified log level.
+// The log file is created in the configured folder with a timestamp-based name.
+// The encoder uses a custom time format for consistent human-readable output.
 func NewLogger(cfg Config) (*Logger, error) {
 	zapLvl := zap.NewAtomicLevel()
 	if err := zapLvl.UnmarshalText([]byte(cfg.Level)); err != nil {
@@ -65,6 +82,10 @@ func NewLogger(cfg Config) (*Logger, error) {
 	}, nil
 }
 
+// With creates a new Logger with additional fields attached.
+//
+// The returned logger inherits all fields from the parent logger and adds
+// the provided fields. It shares the same underlying log file.
 func (l *Logger) With(fields ...zap.Field) *Logger {
 	return &Logger{
 		Logger: l.Logger.With(fields...),
@@ -72,6 +93,12 @@ func (l *Logger) With(fields ...zap.Field) *Logger {
 	}
 }
 
+// Close closes the underlying log file.
+//
+// This method should be called when the logger is no longer needed,
+// typically in a defer statement after creating the logger.
+// If closing the file fails, an error message is printed to stdout
+// since the logger may not be available for logging errors.
 func (l *Logger) Close() error {
 	if err := l.file.Close(); err != nil {
 		//nolint:forbidigo // logger was not closed properly so logging error to stdout

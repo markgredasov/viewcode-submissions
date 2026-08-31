@@ -16,33 +16,8 @@ func (r *repository) Create(ctx context.Context, submission model.Submission) (m
 		RETURNING id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms;
 	`
 
-	row := r.pool.QueryRow(
-		ctx,
-		sqlQuery,
-		submission.ID,
-		submission.UserID,
-		submission.ProblemID,
-		submission.TestsTotal,
-		submission.TestsPassed,
-		submission.Status,
-		submission.Language,
-		submission.ExecutionTimeInMS,
-	)
+	row := r.pool.GetQuerier(ctx).QueryRow(ctx, sqlQuery, submission.ID, submission.UserID, submission.ProblemID,
+		submission.TestsTotal, submission.TestsPassed, submission.Status, submission.Language, submission.ExecutionTimeInMS)
 
-	var rec record
-	err := row.Scan(
-		&rec.ID,
-		&rec.UserID,
-		&rec.ProblemID,
-		&rec.TestsTotal,
-		&rec.TestsPassed,
-		&rec.Status,
-		&rec.Language,
-		&rec.ExecutionTimeInMS,
-	)
-	if err != nil {
-		return model.Submission{}, err
-	}
-
-	return fromRecordToModel(rec)
+	return scanSubmission(row)
 }

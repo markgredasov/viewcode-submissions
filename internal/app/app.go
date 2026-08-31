@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	database_postgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
+	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
-	server_grpc "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
+	grpcserver "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
 	"go.uber.org/zap"
 )
 
@@ -15,8 +15,8 @@ type App struct {
 	ctx        context.Context
 	cancelFunc context.CancelFunc
 	logger     *logger.Logger
-	server     *server_grpc.GRPCServer
-	pool       *database_postgres.ConnectionPool
+	server     *grpcserver.GRPCServer
+	pool       *dbpostgres.ConnectionPool
 }
 
 func NewApp(ctx context.Context, cancelFunc context.CancelFunc) *App {

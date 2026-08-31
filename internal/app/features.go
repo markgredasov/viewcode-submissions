@@ -2,7 +2,7 @@ package app
 
 import (
 	submissionshandler "github.com/markgredasov/viewcode-submissions/internal/handler/submissions"
-	submissionsrepository "github.com/markgredasov/viewcode-submissions/internal/repository/submissions"
+	submissionsrepository "github.com/markgredasov/viewcode-submissions/internal/repository/postgres/submissions"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/registry"
 	submissionsservice "github.com/markgredasov/viewcode-submissions/internal/service/submissions"
 )
