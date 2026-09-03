@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func fromRequestToModel(req *submissions_v1.CreateRequest) (model.Submission, error) {
+func createToSubmission(req *submissions_v1.CreateRequest) (model.Submission, error) {
 	statusModel, err := model.NewStatusFromGRPC(req.GetStatus())
 	if err != nil {
 		return model.Submission{}, err
@@ -37,7 +37,7 @@ func fromRequestToModel(req *submissions_v1.CreateRequest) (model.Submission, er
 	return submission, nil
 }
 
-func fromModelToResponse(m model.Submission) (*submissions_v1.CreateResponse, error) {
+func toSubmission(m model.Submission) (*submissions_v1.Submission, error) {
 	statusModel, err := m.Status.GRPCModel()
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func fromModelToResponse(m model.Submission) (*submissions_v1.CreateResponse, er
 		return nil, err
 	}
 
-	reqSubmission := &submissions_v1.Submission{
+	return &submissions_v1.Submission{
 		Id:              m.ID.String(),
 		UserId:          m.UserID.String(),
 		ProblemId:       m.ProblemID.String(),
@@ -58,10 +58,30 @@ func fromModelToResponse(m model.Submission) (*submissions_v1.CreateResponse, er
 		Language:        languageModel,
 		ExecutionTimeMs: int32(m.ExecutionTimeInMS),
 		CreatedAt:       timestamppb.New(m.CreatedAt),
+	}, nil
+}
+
+func createToResponse(m model.Submission) (*submissions_v1.CreateResponse, error) {
+	s, err := toSubmission(m)
+	if err != nil {
+		return nil, err
 	}
 
 	resp := &submissions_v1.CreateResponse{
-		Submission: reqSubmission,
+		Submission: s,
+	}
+
+	return resp, nil
+}
+
+func getByIDToResponse(m model.Submission) (*submissions_v1.GetByIDResponse, error) {
+	s, err := toSubmission(m)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &submissions_v1.GetByIDResponse{
+		Submission: s,
 	}
 
 	return resp, nil

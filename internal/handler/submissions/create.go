@@ -13,7 +13,7 @@ func (h *handler) Create(ctx context.Context, req *submissions_v1.CreateRequest)
 		return nil, response.GRPCError(err, err.Error())
 	}
 
-	requestModel, err := fromRequestToModel(req)
+	requestModel, err := createToSubmission(req)
 	if err != nil {
 		return nil, response.GRPCError(err, err.Error())
 	}
@@ -23,7 +23,7 @@ func (h *handler) Create(ctx context.Context, req *submissions_v1.CreateRequest)
 		return nil, response.GRPCError(err, err.Error())
 	}
 
-	resp, err := fromModelToResponse(createdModel)
+	resp, err := createToResponse(createdModel)
 	if err != nil {
 		return nil, response.GRPCError(err, err.Error())
 	}

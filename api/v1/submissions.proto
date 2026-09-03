@@ -9,6 +9,7 @@ option go_package = "github.com/markgredasov/viewcode-submissions/pkg/api/submis
 
 service SubmissionsService {
     rpc Create(CreateRequest) returns (CreateResponse);
+    rpc GetByID(GetByIDRequest) returns (GetByIDResponse);
 }
 
 enum SubmissionStatus {
@@ -90,5 +91,15 @@ message CreateRequest {
 }
 
 message CreateResponse {
+    Submission submission = 1;
+}
+
+message GetByIDRequest {
+    string id = 1 [
+        (validate.rules).string.uuid = true
+    ];
+}
+
+message GetByIDResponse {
     Submission submission = 1;
 }

@@ -1,4 +1,4 @@
 pre-commit:
   commands:
     lint:
-      run: goimports -w . && git add . && task lint
+      run: goimports -w . && git add . && task app:lint

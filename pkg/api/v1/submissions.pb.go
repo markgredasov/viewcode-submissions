@@ -402,6 +402,94 @@ func (x *CreateResponse) GetSubmission() *Submission {
 	return nil
 }
 
+type GetByIDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetByIDRequest) Reset() {
+	*x = GetByIDRequest{}
+	mi := &file_api_v1_submissions_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetByIDRequest) ProtoMessage() {}
+
+func (x *GetByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_submissions_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetByIDRequest) Descriptor() ([]byte, []int) {
+	return file_api_v1_submissions_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetByIDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type GetByIDResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Submission    *Submission            `protobuf:"bytes,1,opt,name=submission,proto3" json:"submission,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetByIDResponse) Reset() {
+	*x = GetByIDResponse{}
+	mi := &file_api_v1_submissions_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetByIDResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetByIDResponse) ProtoMessage() {}
+
+func (x *GetByIDResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_submissions_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetByIDResponse.ProtoReflect.Descriptor instead.
+func (*GetByIDResponse) Descriptor() ([]byte, []int) {
+	return file_api_v1_submissions_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetByIDResponse) GetSubmission() *Submission {
+	if x != nil {
+		return x.Submission
+	}
+	return nil
+}
+
 var File_api_v1_submissions_proto protoreflect.FileDescriptor
 
 const file_api_v1_submissions_proto_rawDesc = "" +
@@ -434,6 +522,12 @@ const file_api_v1_submissions_proto_rawDesc = "" +
 	"\x0eCreateResponse\x12:\n" +
 	"\n" +
 	"submission\x18\x01 \x01(\v2\x1a.submissions.v1.SubmissionR\n" +
+	"submission\"*\n" +
+	"\x0eGetByIDRequest\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\"M\n" +
+	"\x0fGetByIDResponse\x12:\n" +
+	"\n" +
+	"submission\x18\x01 \x01(\v2\x1a.submissions.v1.SubmissionR\n" +
 	"submission*\xa9\x01\n" +
 	"\x10SubmissionStatus\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
@@ -455,9 +549,10 @@ const file_api_v1_submissions_proto_rawDesc = "" +
 	"\x0fLANGUAGE_KOTLIN\x10\b\x12\x12\n" +
 	"\x0eLANGUAGE_SWIFT\x10\t\x12\x11\n" +
 	"\rLANGUAGE_RUST\x10\n" +
-	"2]\n" +
+	"2\xa9\x01\n" +
 	"\x12SubmissionsService\x12G\n" +
-	"\x06Create\x12\x1d.submissions.v1.CreateRequest\x1a\x1e.submissions.v1.CreateResponseBTZRgithub.com/markgredasov/viewcode-submissions/pkg/api/submissions/v1;submissions_v1b\x06proto3"
+	"\x06Create\x12\x1d.submissions.v1.CreateRequest\x1a\x1e.submissions.v1.CreateResponse\x12J\n" +
+	"\aGetByID\x12\x1e.submissions.v1.GetByIDRequest\x1a\x1f.submissions.v1.GetByIDResponseBTZRgithub.com/markgredasov/viewcode-submissions/pkg/api/submissions/v1;submissions_v1b\x06proto3"
 
 var (
 	file_api_v1_submissions_proto_rawDescOnce sync.Once
@@ -472,29 +567,34 @@ func file_api_v1_submissions_proto_rawDescGZIP() []byte {
 }
 
 var file_api_v1_submissions_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_v1_submissions_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_api_v1_submissions_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_api_v1_submissions_proto_goTypes = []any{
 	(SubmissionStatus)(0),         // 0: submissions.v1.SubmissionStatus
 	(Language)(0),                 // 1: submissions.v1.Language
 	(*Submission)(nil),            // 2: submissions.v1.Submission
 	(*CreateRequest)(nil),         // 3: submissions.v1.CreateRequest
 	(*CreateResponse)(nil),        // 4: submissions.v1.CreateResponse
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*GetByIDRequest)(nil),        // 5: submissions.v1.GetByIDRequest
+	(*GetByIDResponse)(nil),       // 6: submissions.v1.GetByIDResponse
+	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
 }
 var file_api_v1_submissions_proto_depIdxs = []int32{
 	0, // 0: submissions.v1.Submission.status:type_name -> submissions.v1.SubmissionStatus
 	1, // 1: submissions.v1.Submission.language:type_name -> submissions.v1.Language
-	5, // 2: submissions.v1.Submission.created_at:type_name -> google.protobuf.Timestamp
+	7, // 2: submissions.v1.Submission.created_at:type_name -> google.protobuf.Timestamp
 	0, // 3: submissions.v1.CreateRequest.status:type_name -> submissions.v1.SubmissionStatus
 	1, // 4: submissions.v1.CreateRequest.language:type_name -> submissions.v1.Language
 	2, // 5: submissions.v1.CreateResponse.submission:type_name -> submissions.v1.Submission
-	3, // 6: submissions.v1.SubmissionsService.Create:input_type -> submissions.v1.CreateRequest
-	4, // 7: submissions.v1.SubmissionsService.Create:output_type -> submissions.v1.CreateResponse
-	7, // [7:8] is the sub-list for method output_type
-	6, // [6:7] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	2, // 6: submissions.v1.GetByIDResponse.submission:type_name -> submissions.v1.Submission
+	3, // 7: submissions.v1.SubmissionsService.Create:input_type -> submissions.v1.CreateRequest
+	5, // 8: submissions.v1.SubmissionsService.GetByID:input_type -> submissions.v1.GetByIDRequest
+	4, // 9: submissions.v1.SubmissionsService.Create:output_type -> submissions.v1.CreateResponse
+	6, // 10: submissions.v1.SubmissionsService.GetByID:output_type -> submissions.v1.GetByIDResponse
+	9, // [9:11] is the sub-list for method output_type
+	7, // [7:9] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_submissions_proto_init() }
@@ -508,7 +608,7 @@ func file_api_v1_submissions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_submissions_proto_rawDesc), len(file_api_v1_submissions_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
