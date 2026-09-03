@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -18,9 +19,9 @@ type GRPCServer struct {
 	log    *logger.Logger
 }
 
-func New(config Config, logger *logger.Logger) *GRPCServer {
+func New(config Config, logger *logger.Logger, unaryInterceptors ...interceptor.Unary) *GRPCServer {
 	return &GRPCServer{
-		server: grpc.NewServer(),
+		server: grpc.NewServer(interceptor.Chain(unaryInterceptors...)),
 		config: config,
 		log:    logger,
 	}
