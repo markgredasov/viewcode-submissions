@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
+import "google/protobuf/empty.proto";
 
 package submissions.v1;
 
@@ -10,6 +11,7 @@ option go_package = "github.com/markgredasov/viewcode-submissions/pkg/api/submis
 service SubmissionsService {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc GetByID(GetByIDRequest) returns (GetByIDResponse);
+    rpc ListAll(google.protobuf.Empty) returns (ListAllResponse);
 }
 
 enum SubmissionStatus {
@@ -102,4 +104,8 @@ message GetByIDRequest {
 
 message GetByIDResponse {
     Submission submission = 1;
+}
+
+message ListAllResponse {
+    repeated Submission submissions = 1;
 }

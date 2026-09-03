@@ -12,6 +12,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	SubmissionsService_Create_FullMethodName  = "/submissions.v1.SubmissionsService/Create"
 	SubmissionsService_GetByID_FullMethodName = "/submissions.v1.SubmissionsService/GetByID"
+	SubmissionsService_ListAll_FullMethodName = "/submissions.v1.SubmissionsService/ListAll"
 )
 
 // SubmissionsServiceClient is the client API for SubmissionsService service.
@@ -30,6 +32,7 @@ const (
 type SubmissionsServiceClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 	GetByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*GetByIDResponse, error)
+	ListAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListAllResponse, error)
 }
 
 type submissionsServiceClient struct {
@@ -60,12 +63,23 @@ func (c *submissionsServiceClient) GetByID(ctx context.Context, in *GetByIDReque
 	return out, nil
 }
 
+func (c *submissionsServiceClient) ListAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListAllResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAllResponse)
+	err := c.cc.Invoke(ctx, SubmissionsService_ListAll_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubmissionsServiceServer is the server API for SubmissionsService service.
 // All implementations should embed UnimplementedSubmissionsServiceServer
 // for forward compatibility.
 type SubmissionsServiceServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 	GetByID(context.Context, *GetByIDRequest) (*GetByIDResponse, error)
+	ListAll(context.Context, *emptypb.Empty) (*ListAllResponse, error)
 }
 
 // UnimplementedSubmissionsServiceServer should be embedded to have
@@ -80,6 +94,9 @@ func (UnimplementedSubmissionsServiceServer) Create(context.Context, *CreateRequ
 }
 func (UnimplementedSubmissionsServiceServer) GetByID(context.Context, *GetByIDRequest) (*GetByIDResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetByID not implemented")
+}
+func (UnimplementedSubmissionsServiceServer) ListAll(context.Context, *emptypb.Empty) (*ListAllResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAll not implemented")
 }
 func (UnimplementedSubmissionsServiceServer) testEmbeddedByValue() {}
 
@@ -137,6 +154,24 @@ func _SubmissionsService_GetByID_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubmissionsService_ListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubmissionsServiceServer).ListAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubmissionsService_ListAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubmissionsServiceServer).ListAll(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubmissionsService_ServiceDesc is the grpc.ServiceDesc for SubmissionsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -151,6 +186,10 @@ var SubmissionsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetByID",
 			Handler:    _SubmissionsService_GetByID_Handler,
+		},
+		{
+			MethodName: "ListAll",
+			Handler:    _SubmissionsService_ListAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

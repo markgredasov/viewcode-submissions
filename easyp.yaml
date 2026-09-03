@@ -8,6 +8,7 @@ lint:
 
 deps:
   - github.com/bufbuild/protoc-gen-validate
+  - github.com/googleapis/googleapis@common-protos-1_3_1
 generate:
     inputs:
       - directory: "api"

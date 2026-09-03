@@ -61,6 +61,19 @@ func toSubmission(m model.Submission) (*submissions_v1.Submission, error) {
 	}, nil
 }
 
+func toSubmissions(m []model.Submission) ([]*submissions_v1.Submission, error) {
+	submissions := make([]*submissions_v1.Submission, len(m))
+	for i := range m {
+		s, err := toSubmission(m[i])
+		if err != nil {
+			return nil, err
+		}
+
+		submissions[i] = s
+	}
+	return submissions, nil
+}
+
 func createToResponse(m model.Submission) (*submissions_v1.CreateResponse, error) {
 	s, err := toSubmission(m)
 	if err != nil {
@@ -82,6 +95,19 @@ func getByIDToResponse(m model.Submission) (*submissions_v1.GetByIDResponse, err
 
 	resp := &submissions_v1.GetByIDResponse{
 		Submission: s,
+	}
+
+	return resp, nil
+}
+
+func listAllToResponse(m []model.Submission) (*submissions_v1.ListAllResponse, error) {
+	s, err := toSubmissions(m)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &submissions_v1.ListAllResponse{
+		Submissions: s,
 	}
 
 	return resp, nil

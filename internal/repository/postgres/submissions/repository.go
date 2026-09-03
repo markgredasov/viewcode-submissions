@@ -3,6 +3,7 @@ package submissionsrepository
 import (
 	"github.com/jackc/pgx/v5"
 	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
+	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
 )
 
@@ -29,8 +30,25 @@ func scanSubmission(row pgx.Row) (model.Submission, error) {
 		&rec.ExecutionTimeInMS,
 	)
 	if err != nil {
-		return model.Submission{}, err
+		return model.Submission{}, errs.Internal("scan submission", err)
 	}
 
 	return fromRecordToModel(rec)
+}
+
+func scanSubmissions(rows pgx.Rows) ([]model.Submission, error) {
+	var out []model.Submission
+
+	for rows.Next() {
+		s, err := scanSubmission(rows)
+		if err != nil {
+			return nil, errs.Internal("scan submissions", err)
+		}
+		out = append(out, s)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errs.Internal("iterate submissions", err)
+	}
+
+	return out, nil
 }

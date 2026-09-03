@@ -50,7 +50,7 @@ func NewSubmission(
 		ID:                id,
 		UserID:            userIDValueObject,
 		ProblemID:         problemIDValueObject,
-		TestsTotal:        testsPassed,
+		TestsTotal:        testsTotal,
 		TestsPassed:       testsPassed,
 		Status:            statusValueObject,
 		Language:          languageValueObject,

@@ -13,6 +13,7 @@ type service struct {
 type SubmissionsRepository interface {
 	Create(ctx context.Context, submission model.Submission) (model.Submission, error)
 	GetByID(ctx context.Context, id model.UUID) (model.Submission, error)
+	ListAll(ctx context.Context) ([]model.Submission, error)
 }
 
 func New(repository SubmissionsRepository) *service {

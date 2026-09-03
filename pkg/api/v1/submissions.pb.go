@@ -14,6 +14,7 @@ import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -490,11 +491,55 @@ func (x *GetByIDResponse) GetSubmission() *Submission {
 	return nil
 }
 
+type ListAllResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Submissions   []*Submission          `protobuf:"bytes,1,rep,name=submissions,proto3" json:"submissions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAllResponse) Reset() {
+	*x = ListAllResponse{}
+	mi := &file_api_v1_submissions_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAllResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAllResponse) ProtoMessage() {}
+
+func (x *ListAllResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_v1_submissions_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAllResponse.ProtoReflect.Descriptor instead.
+func (*ListAllResponse) Descriptor() ([]byte, []int) {
+	return file_api_v1_submissions_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListAllResponse) GetSubmissions() []*Submission {
+	if x != nil {
+		return x.Submissions
+	}
+	return nil
+}
+
 var File_api_v1_submissions_proto protoreflect.FileDescriptor
 
 const file_api_v1_submissions_proto_rawDesc = "" +
 	"\n" +
-	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17validate/validate.proto\"\xa1\x03\n" +
+	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17validate/validate.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xa1\x03\n" +
 	"\n" +
 	"Submission\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
@@ -528,7 +573,9 @@ const file_api_v1_submissions_proto_rawDesc = "" +
 	"\x0fGetByIDResponse\x12:\n" +
 	"\n" +
 	"submission\x18\x01 \x01(\v2\x1a.submissions.v1.SubmissionR\n" +
-	"submission*\xa9\x01\n" +
+	"submission\"O\n" +
+	"\x0fListAllResponse\x12<\n" +
+	"\vsubmissions\x18\x01 \x03(\v2\x1a.submissions.v1.SubmissionR\vsubmissions*\xa9\x01\n" +
 	"\x10SubmissionStatus\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSTATUS_PENDING\x10\x01\x12\x12\n" +
@@ -549,10 +596,11 @@ const file_api_v1_submissions_proto_rawDesc = "" +
 	"\x0fLANGUAGE_KOTLIN\x10\b\x12\x12\n" +
 	"\x0eLANGUAGE_SWIFT\x10\t\x12\x11\n" +
 	"\rLANGUAGE_RUST\x10\n" +
-	"2\xa9\x01\n" +
+	"2\xed\x01\n" +
 	"\x12SubmissionsService\x12G\n" +
 	"\x06Create\x12\x1d.submissions.v1.CreateRequest\x1a\x1e.submissions.v1.CreateResponse\x12J\n" +
-	"\aGetByID\x12\x1e.submissions.v1.GetByIDRequest\x1a\x1f.submissions.v1.GetByIDResponseBTZRgithub.com/markgredasov/viewcode-submissions/pkg/api/submissions/v1;submissions_v1b\x06proto3"
+	"\aGetByID\x12\x1e.submissions.v1.GetByIDRequest\x1a\x1f.submissions.v1.GetByIDResponse\x12B\n" +
+	"\aListAll\x12\x16.google.protobuf.Empty\x1a\x1f.submissions.v1.ListAllResponseBTZRgithub.com/markgredasov/viewcode-submissions/pkg/api/submissions/v1;submissions_v1b\x06proto3"
 
 var (
 	file_api_v1_submissions_proto_rawDescOnce sync.Once
@@ -567,7 +615,7 @@ func file_api_v1_submissions_proto_rawDescGZIP() []byte {
 }
 
 var file_api_v1_submissions_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_v1_submissions_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_api_v1_submissions_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_api_v1_submissions_proto_goTypes = []any{
 	(SubmissionStatus)(0),         // 0: submissions.v1.SubmissionStatus
 	(Language)(0),                 // 1: submissions.v1.Language
@@ -576,25 +624,30 @@ var file_api_v1_submissions_proto_goTypes = []any{
 	(*CreateResponse)(nil),        // 4: submissions.v1.CreateResponse
 	(*GetByIDRequest)(nil),        // 5: submissions.v1.GetByIDRequest
 	(*GetByIDResponse)(nil),       // 6: submissions.v1.GetByIDResponse
-	(*timestamppb.Timestamp)(nil), // 7: google.protobuf.Timestamp
+	(*ListAllResponse)(nil),       // 7: submissions.v1.ListAllResponse
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 9: google.protobuf.Empty
 }
 var file_api_v1_submissions_proto_depIdxs = []int32{
-	0, // 0: submissions.v1.Submission.status:type_name -> submissions.v1.SubmissionStatus
-	1, // 1: submissions.v1.Submission.language:type_name -> submissions.v1.Language
-	7, // 2: submissions.v1.Submission.created_at:type_name -> google.protobuf.Timestamp
-	0, // 3: submissions.v1.CreateRequest.status:type_name -> submissions.v1.SubmissionStatus
-	1, // 4: submissions.v1.CreateRequest.language:type_name -> submissions.v1.Language
-	2, // 5: submissions.v1.CreateResponse.submission:type_name -> submissions.v1.Submission
-	2, // 6: submissions.v1.GetByIDResponse.submission:type_name -> submissions.v1.Submission
-	3, // 7: submissions.v1.SubmissionsService.Create:input_type -> submissions.v1.CreateRequest
-	5, // 8: submissions.v1.SubmissionsService.GetByID:input_type -> submissions.v1.GetByIDRequest
-	4, // 9: submissions.v1.SubmissionsService.Create:output_type -> submissions.v1.CreateResponse
-	6, // 10: submissions.v1.SubmissionsService.GetByID:output_type -> submissions.v1.GetByIDResponse
-	9, // [9:11] is the sub-list for method output_type
-	7, // [7:9] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	0,  // 0: submissions.v1.Submission.status:type_name -> submissions.v1.SubmissionStatus
+	1,  // 1: submissions.v1.Submission.language:type_name -> submissions.v1.Language
+	8,  // 2: submissions.v1.Submission.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: submissions.v1.CreateRequest.status:type_name -> submissions.v1.SubmissionStatus
+	1,  // 4: submissions.v1.CreateRequest.language:type_name -> submissions.v1.Language
+	2,  // 5: submissions.v1.CreateResponse.submission:type_name -> submissions.v1.Submission
+	2,  // 6: submissions.v1.GetByIDResponse.submission:type_name -> submissions.v1.Submission
+	2,  // 7: submissions.v1.ListAllResponse.submissions:type_name -> submissions.v1.Submission
+	3,  // 8: submissions.v1.SubmissionsService.Create:input_type -> submissions.v1.CreateRequest
+	5,  // 9: submissions.v1.SubmissionsService.GetByID:input_type -> submissions.v1.GetByIDRequest
+	9,  // 10: submissions.v1.SubmissionsService.ListAll:input_type -> google.protobuf.Empty
+	4,  // 11: submissions.v1.SubmissionsService.Create:output_type -> submissions.v1.CreateResponse
+	6,  // 12: submissions.v1.SubmissionsService.GetByID:output_type -> submissions.v1.GetByIDResponse
+	7,  // 13: submissions.v1.SubmissionsService.ListAll:output_type -> submissions.v1.ListAllResponse
+	11, // [11:14] is the sub-list for method output_type
+	8,  // [8:11] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_api_v1_submissions_proto_init() }
@@ -608,7 +661,7 @@ func file_api_v1_submissions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_v1_submissions_proto_rawDesc), len(file_api_v1_submissions_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

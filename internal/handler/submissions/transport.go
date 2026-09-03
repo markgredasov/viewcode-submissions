@@ -16,6 +16,7 @@ type handler struct {
 type SubmissionsService interface {
 	Create(ctx context.Context, submission model.Submission) (model.Submission, error)
 	GetByID(ctx context.Context, id string) (model.Submission, error)
+	ListAll(ctx context.Context) ([]model.Submission, error)
 }
 
 func New(service SubmissionsService) *handler {
