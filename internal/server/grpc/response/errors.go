@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
+	"github.com/markgredasov/viewcode-submissions/internal/logger"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -25,4 +27,11 @@ func GRPCError(err error, msg string) error {
 	}
 
 	return status.Error(statusCode, msg)
+}
+
+func Panic(log *logger.Logger, p any, msg string) error {
+	err := status.Errorf(codes.Internal, "unexpected panic: %v", p)
+	log.Error(msg, zap.Error(err))
+
+	return err
 }

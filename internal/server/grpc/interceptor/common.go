@@ -8,6 +8,7 @@ import (
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/response"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -57,24 +58,16 @@ func Logger(l *logger.Logger) Unary {
 }
 
 func Recovery() Unary {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	//nolint:nonamedreturns // more readable to use named returns here
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 		log := logger.FromContext(ctx)
-		var err error
 		defer func() {
 			if r := recover(); r != nil {
-				err = fmt.Errorf("during handle gRPC request got unexpected panic: %v", r)
-				msg := "unexpected panic"
-				err = errs.Internal(msg, err)
-				log.Error(msg, zap.Error(err))
+				err = response.Panic(log, r, "during handle gRPC request got unexpected panic")
 			}
 		}()
 
-		resp, hErr := handler(ctx, req)
-		if hErr != nil {
-			err = hErr
-		}
-
-		return resp, err
+		return handler(ctx, req)
 	}
 }
 
