@@ -2,7 +2,11 @@ package submissionsrepository
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
+	"github.com/jackc/pgx/v5"
+	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
 )
 
@@ -18,5 +22,12 @@ func (r *repository) GetByID(ctx context.Context, id model.UUID) (model.Submissi
 
 	row := r.pool.GetQuerier(ctx).QueryRow(ctx, sqlQuery, id)
 
-	return scanSubmission(row)
+	submission, err := scanSubmission(row)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.Submission{}, errs.NotFound(fmt.Sprintf("no submission with id=%s found", id))
+		}
+		return model.Submission{}, err
+	}
+	return submission, nil
 }

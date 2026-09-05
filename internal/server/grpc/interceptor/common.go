@@ -11,9 +11,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/response"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
 )
 
 var (
@@ -83,7 +81,7 @@ func Trace() Unary {
 
 		resp, err := handler(ctx, req)
 
-		statusCode := getStatusCode(err)
+		statusCode := response.GetStatusCode(err)
 
 		log.Debug(
 			"<<< done gRPC request",
@@ -109,16 +107,4 @@ func getFromMetadata(ctx context.Context, header string) (string, error) {
 	val := vals[0]
 
 	return val, nil
-}
-
-func getStatusCode(err error) codes.Code {
-	statusCode := codes.OK
-	if err != nil {
-		if st, ok := status.FromError(err); ok {
-			statusCode = st.Code()
-		} else {
-			statusCode = codes.Unknown
-		}
-	}
-	return statusCode
 }

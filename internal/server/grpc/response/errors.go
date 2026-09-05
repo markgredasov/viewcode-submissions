@@ -2,6 +2,7 @@ package response
 
 import (
 	"errors"
+	"fmt"
 
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
@@ -22,16 +23,34 @@ func GRPCError(err error, msg string) error {
 		statusCode = codes.NotFound
 	case errors.Is(err, errs.ErrNotImplemented):
 		statusCode = codes.Unimplemented
+	case errors.Is(err, errs.ErrForbidden):
+		statusCode = codes.PermissionDenied
 	default:
 		statusCode = codes.Internal
 	}
 
-	return status.Error(statusCode, msg)
+	return errorResponse(statusCode, err, msg)
 }
 
 func Panic(log *logger.Logger, p any, msg string) error {
-	err := status.Errorf(codes.Internal, "unexpected panic: %v", p)
+	err := fmt.Errorf("unexpected panic: %v", p)
 	log.Error(msg, zap.Error(err))
 
-	return err
+	return errorResponse(codes.Internal, err, msg)
+}
+
+func errorResponse(statusCode codes.Code, err error, msg string) error {
+	return status.Error(statusCode, fmt.Sprintf("%s: %v", msg, err))
+}
+
+func GetStatusCode(err error) codes.Code {
+	statusCode := codes.OK
+	if err != nil {
+		if st, ok := status.FromError(err); ok {
+			statusCode = st.Code()
+		} else {
+			statusCode = codes.Unknown
+		}
+	}
+	return statusCode
 }
