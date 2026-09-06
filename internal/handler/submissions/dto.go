@@ -1,43 +1,29 @@
 package submissionshandler
 
 import (
-	"time"
-
 	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 	submissions_v1 "github.com/markgredasov/viewcode-submissions/pkg/api/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func createToSubmission(req *submissions_v1.CreateRequest) (model.Submission, error) {
-	statusModel, err := model.NewStatusFromGRPC(req.GetStatus())
-	if err != nil {
-		return model.Submission{}, err
-	}
-
+func createToSubmission(req *submissions_v1.CreateRequest) (submission.Submission, error) {
 	languageModel, err := model.NewLanguageFromGRPC(req.GetLanguage())
 	if err != nil {
-		return model.Submission{}, err
+		return submission.Submission{}, err
 	}
 
-	submission, err := model.NewSubmission(
-		req.GetUserId(),
-		req.GetProblemId(),
-		int(req.GetTestsTotal()),
-		int(req.GetTestsPassed()),
-		statusModel.String(),
-		languageModel.String(),
-		int(req.GetExecutionTimeMs()),
-		time.Now(),
-	)
+	s, err := submission.New(req.GetUserId(), req.GetProblemId(), int(req.GetTestsTotal()),
+		submission.TestsPassedUnitialized, languageModel, submission.ExecutionTimeInMSUnitialized)
 
 	if err != nil {
-		return model.Submission{}, err
+		return submission.Submission{}, err
 	}
 
-	return submission, nil
+	return s, nil
 }
 
-func toSubmission(m model.Submission) (*submissions_v1.Submission, error) {
+func toSubmission(m submission.Submission) (*submissions_v1.Submission, error) {
 	statusModel, err := m.Status.GRPCModel()
 	if err != nil {
 		return nil, err
@@ -58,10 +44,11 @@ func toSubmission(m model.Submission) (*submissions_v1.Submission, error) {
 		Language:        languageModel,
 		ExecutionTimeMs: int32(m.ExecutionTimeInMS),
 		CreatedAt:       timestamppb.New(m.CreatedAt),
+		UpdatedAt:       timestamppb.New(m.UpdatedAt),
 	}, nil
 }
 
-func toSubmissions(m []model.Submission) ([]*submissions_v1.Submission, error) {
+func toSubmissions(m []submission.Submission) ([]*submissions_v1.Submission, error) {
 	submissions := make([]*submissions_v1.Submission, len(m))
 	for i := range m {
 		s, err := toSubmission(m[i])
@@ -74,7 +61,7 @@ func toSubmissions(m []model.Submission) ([]*submissions_v1.Submission, error) {
 	return submissions, nil
 }
 
-func createToResponse(m model.Submission) (*submissions_v1.CreateResponse, error) {
+func createToResponse(m submission.Submission) (*submissions_v1.CreateResponse, error) {
 	s, err := toSubmission(m)
 	if err != nil {
 		return nil, err
@@ -87,7 +74,7 @@ func createToResponse(m model.Submission) (*submissions_v1.CreateResponse, error
 	return resp, nil
 }
 
-func getByIDToResponse(m model.Submission) (*submissions_v1.GetByIDResponse, error) {
+func getByIDToResponse(m submission.Submission) (*submissions_v1.GetByIDResponse, error) {
 	s, err := toSubmission(m)
 	if err != nil {
 		return nil, err
@@ -100,7 +87,7 @@ func getByIDToResponse(m model.Submission) (*submissions_v1.GetByIDResponse, err
 	return resp, nil
 }
 
-func listAllToResponse(m []model.Submission) (*submissions_v1.ListAllResponse, error) {
+func listAllToResponse(m []submission.Submission) (*submissions_v1.ListAllResponse, error) {
 	s, err := toSubmissions(m)
 	if err != nil {
 		return nil, err

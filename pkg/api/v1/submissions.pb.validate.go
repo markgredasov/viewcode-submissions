@@ -153,6 +153,35 @@ func (m *Submission) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubmissionValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubmissionValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubmissionValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return SubmissionMultiError(errors)
 	}
@@ -294,19 +323,6 @@ func (m *CreateRequest) validate(all bool) error {
 
 	// no validation rules for TestsTotal
 
-	// no validation rules for TestsPassed
-
-	if _, ok := _CreateRequest_Status_NotInLookup[m.GetStatus()]; ok {
-		err := CreateRequestValidationError{
-			field:  "Status",
-			reason: "value must not be in list [STATUS_UNSPECIFIED]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if _, ok := _CreateRequest_Language_NotInLookup[m.GetLanguage()]; ok {
 		err := CreateRequestValidationError{
 			field:  "Language",
@@ -317,8 +333,6 @@ func (m *CreateRequest) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for ExecutionTimeMs
 
 	if len(errors) > 0 {
 		return CreateRequestMultiError(errors)
@@ -405,10 +419,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateRequestValidationError{}
-
-var _CreateRequest_Status_NotInLookup = map[SubmissionStatus]struct{}{
-	0: {},
-}
 
 var _CreateRequest_Language_NotInLookup = map[Language]struct{}{
 	0: {},

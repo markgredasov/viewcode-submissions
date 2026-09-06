@@ -4,7 +4,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
-	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
 type repository struct {
@@ -17,7 +17,7 @@ func New(pool dbpostgres.Pool) *repository {
 	}
 }
 
-func scanSubmission(row pgx.Row) (model.Submission, error) {
+func scanSubmission(row pgx.Row) (submission.Submission, error) {
 	var rec record
 	err := row.Scan(
 		&rec.ID,
@@ -30,14 +30,14 @@ func scanSubmission(row pgx.Row) (model.Submission, error) {
 		&rec.ExecutionTimeInMS,
 	)
 	if err != nil {
-		return model.Submission{}, errs.Internal("scan submission", err)
+		return submission.Submission{}, errs.Internal("scan submission", err)
 	}
 
-	return fromRecordToModel(rec)
+	return toModel(rec)
 }
 
-func scanSubmissions(rows pgx.Rows) ([]model.Submission, error) {
-	var out []model.Submission
+func scanSubmissions(rows pgx.Rows) ([]submission.Submission, error) {
+	var out []submission.Submission
 
 	for rows.Next() {
 		s, err := scanSubmission(rows)

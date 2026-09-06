@@ -10,11 +10,12 @@ CREATE TABLE IF NOT EXISTS users.submissions (
     user_id             UUID                          NOT NULL,
     problem_id          UUID                          NOT NULL,
     tests_total         SMALLINT                      NOT NULL,
-    tests_passed        SMALLINT                      NOT NULL,
+    tests_passed        SMALLINT,
     condition           users.submission_status       NOT NULL,
     lang                users.available_languages     NOT NULL,
-    execution_time_ms   INT                           NOT NULL,
-    created_at          TIMESTAMP                     NOT NULL          DEFAULT NOW()
+    execution_time_ms   INT,
+    created_at          TIMESTAMP                     NOT NULL          DEFAULT NOW(),
+    updated_at          TIMESTAMP                     NOT NULL          DEFAULT NOW()
 );
 
 -- +goose Down

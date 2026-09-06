@@ -3,10 +3,10 @@ package submissionsrepository
 import (
 	"context"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *repository) Create(ctx context.Context, submission model.Submission) (model.Submission, error) {
+func (r *repository) Create(ctx context.Context, submission submission.Submission) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

@@ -170,6 +170,7 @@ type Submission struct {
 	Language        Language               `protobuf:"varint,7,opt,name=language,proto3,enum=submissions.v1.Language" json:"language,omitempty"`
 	ExecutionTimeMs int32                  `protobuf:"varint,8,opt,name=execution_time_ms,json=executionTimeMs,proto3" json:"execution_time_ms,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -267,17 +268,21 @@ func (x *Submission) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Submission) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 type CreateRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	UserId          string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProblemId       string                 `protobuf:"bytes,2,opt,name=problem_id,json=problemId,proto3" json:"problem_id,omitempty"`
-	TestsTotal      int32                  `protobuf:"varint,3,opt,name=tests_total,json=testsTotal,proto3" json:"tests_total,omitempty"`
-	TestsPassed     int32                  `protobuf:"varint,4,opt,name=tests_passed,json=testsPassed,proto3" json:"tests_passed,omitempty"`
-	Status          SubmissionStatus       `protobuf:"varint,5,opt,name=status,proto3,enum=submissions.v1.SubmissionStatus" json:"status,omitempty"`
-	Language        Language               `protobuf:"varint,6,opt,name=language,proto3,enum=submissions.v1.Language" json:"language,omitempty"`
-	ExecutionTimeMs int32                  `protobuf:"varint,7,opt,name=execution_time_ms,json=executionTimeMs,proto3" json:"execution_time_ms,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ProblemId     string                 `protobuf:"bytes,2,opt,name=problem_id,json=problemId,proto3" json:"problem_id,omitempty"`
+	TestsTotal    int32                  `protobuf:"varint,3,opt,name=tests_total,json=testsTotal,proto3" json:"tests_total,omitempty"`
+	Language      Language               `protobuf:"varint,4,opt,name=language,proto3,enum=submissions.v1.Language" json:"language,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateRequest) Reset() {
@@ -331,32 +336,11 @@ func (x *CreateRequest) GetTestsTotal() int32 {
 	return 0
 }
 
-func (x *CreateRequest) GetTestsPassed() int32 {
-	if x != nil {
-		return x.TestsPassed
-	}
-	return 0
-}
-
-func (x *CreateRequest) GetStatus() SubmissionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return SubmissionStatus_STATUS_UNSPECIFIED
-}
-
 func (x *CreateRequest) GetLanguage() Language {
 	if x != nil {
 		return x.Language
 	}
 	return Language_LANGUAGE_UNSPECIFIED
-}
-
-func (x *CreateRequest) GetExecutionTimeMs() int32 {
-	if x != nil {
-		return x.ExecutionTimeMs
-	}
-	return 0
 }
 
 type CreateResponse struct {
@@ -539,7 +523,7 @@ var File_api_v1_submissions_proto protoreflect.FileDescriptor
 
 const file_api_v1_submissions_proto_rawDesc = "" +
 	"\n" +
-	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17validate/validate.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xa1\x03\n" +
+	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17validate/validate.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xdc\x03\n" +
 	"\n" +
 	"Submission\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
@@ -553,17 +537,17 @@ const file_api_v1_submissions_proto_rawDesc = "" +
 	"\blanguage\x18\a \x01(\x0e2\x18.submissions.v1.LanguageB\b\xfaB\x05\x82\x01\x02 \x00R\blanguage\x12*\n" +
 	"\x11execution_time_ms\x18\b \x01(\x05R\x0fexecutionTimeMs\x129\n" +
 	"\n" +
-	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\xcf\x02\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xbc\x01\n" +
 	"\rCreateRequest\x12!\n" +
 	"\auser_id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x06userId\x12'\n" +
 	"\n" +
 	"problem_id\x18\x02 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\tproblemId\x12\x1f\n" +
 	"\vtests_total\x18\x03 \x01(\x05R\n" +
-	"testsTotal\x12!\n" +
-	"\ftests_passed\x18\x04 \x01(\x05R\vtestsPassed\x12B\n" +
-	"\x06status\x18\x05 \x01(\x0e2 .submissions.v1.SubmissionStatusB\b\xfaB\x05\x82\x01\x02 \x00R\x06status\x12>\n" +
-	"\blanguage\x18\x06 \x01(\x0e2\x18.submissions.v1.LanguageB\b\xfaB\x05\x82\x01\x02 \x00R\blanguage\x12*\n" +
-	"\x11execution_time_ms\x18\a \x01(\x05R\x0fexecutionTimeMs\"L\n" +
+	"testsTotal\x12>\n" +
+	"\blanguage\x18\x04 \x01(\x0e2\x18.submissions.v1.LanguageB\b\xfaB\x05\x82\x01\x02 \x00R\blanguage\"L\n" +
 	"\x0eCreateResponse\x12:\n" +
 	"\n" +
 	"submission\x18\x01 \x01(\v2\x1a.submissions.v1.SubmissionR\n" +
@@ -632,7 +616,7 @@ var file_api_v1_submissions_proto_depIdxs = []int32{
 	0,  // 0: submissions.v1.Submission.status:type_name -> submissions.v1.SubmissionStatus
 	1,  // 1: submissions.v1.Submission.language:type_name -> submissions.v1.Language
 	8,  // 2: submissions.v1.Submission.created_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: submissions.v1.CreateRequest.status:type_name -> submissions.v1.SubmissionStatus
+	8,  // 3: submissions.v1.Submission.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: submissions.v1.CreateRequest.language:type_name -> submissions.v1.Language
 	2,  // 5: submissions.v1.CreateResponse.submission:type_name -> submissions.v1.Submission
 	2,  // 6: submissions.v1.GetByIDResponse.submission:type_name -> submissions.v1.Submission

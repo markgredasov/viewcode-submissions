@@ -1,4 +1,4 @@
-package model
+package submission
 
 import (
 	"fmt"

@@ -8,9 +8,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *repository) GetByID(ctx context.Context, id model.UUID) (model.Submission, error) {
+func (r *repository) GetByID(ctx context.Context, id model.UUID) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -22,12 +23,12 @@ func (r *repository) GetByID(ctx context.Context, id model.UUID) (model.Submissi
 
 	row := r.pool.GetQuerier(ctx).QueryRow(ctx, sqlQuery, id)
 
-	submission, err := scanSubmission(row)
+	s, err := scanSubmission(row)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return model.Submission{}, errs.NotFound(fmt.Sprintf("no submission with id=%s found", id))
+			return submission.Submission{}, errs.NotFound(fmt.Sprintf("no submission with id=%s found", id))
 		}
-		return model.Submission{}, err
+		return submission.Submission{}, err
 	}
-	return submission, nil
+	return s, nil
 }
