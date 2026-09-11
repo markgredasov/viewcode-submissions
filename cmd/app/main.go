@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"net/http"
 	"os/signal"
 	"syscall"
 
@@ -18,11 +15,5 @@ func main() {
 	)
 	defer cancel()
 
-	app := app.NewApp(ctx, cancel)
-
-	if err := app.Run(); err != nil {
-		if !errors.Is(err, http.ErrServerClosed) {
-			fmt.Println("run application:", err)
-		}
-	}
+	app.New(ctx).Run(ctx)
 }

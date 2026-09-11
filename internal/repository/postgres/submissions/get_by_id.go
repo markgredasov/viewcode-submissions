@@ -11,7 +11,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *repository) GetByID(ctx context.Context, id model.UUID) (submission.Submission, error) {
+func (r *Repository) GetByID(ctx context.Context, id model.UUID) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

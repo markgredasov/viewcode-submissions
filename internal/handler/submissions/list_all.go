@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (h *handler) ListAll(ctx context.Context, _ *emptypb.Empty) (*submissions_v1.ListAllResponse, error) {
+func (h *Handler) ListAll(ctx context.Context, _ *emptypb.Empty) (*submissions_v1.ListAllResponse, error) {
 	m, err := h.service.ListAll(ctx)
 	if err != nil {
 		return nil, response.GRPCError(err, "list all submissions")

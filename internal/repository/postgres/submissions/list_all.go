@@ -6,7 +6,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *repository) ListAll(ctx context.Context) ([]submission.Submission, error) {
+func (r *Repository) ListAll(ctx context.Context) ([]submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

@@ -2,52 +2,66 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"os"
+	"net/http"
+	"time"
 
-	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
-	"github.com/markgredasov/viewcode-submissions/internal/logger"
+	"github.com/markgredasov/viewcode-submissions/internal/app/closer"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor"
 	grpcserver "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
-	"go.uber.org/zap"
 )
 
 type App struct {
-	ctx        context.Context
-	cancelFunc context.CancelFunc
-	logger     *logger.Logger
-	server     *grpcserver.GRPCServer
-	pool       *dbpostgres.ConnectionPool
+	server      *grpcserver.GRPCServer
+	diContainer *diContainer
 }
 
-func NewApp(ctx context.Context, cancelFunc context.CancelFunc) *App {
-	return &App{
-		ctx:        ctx,
-		cancelFunc: cancelFunc,
+func New(ctx context.Context) *App {
+	a := &App{
+		diContainer: newDIContainer(ctx),
+	}
+
+	a.initDeps()
+
+	return a
+}
+
+func (a *App) initDeps() {
+	inits := []func(){
+		a.initGRPCServer,
+	}
+
+	for _, fn := range inits {
+		fn()
 	}
 }
 
-func (a *App) Run() error {
-	if err := a.initLogger(); err != nil {
-		//nolint:forbidigo // logger was not initialized to write here smth
-		fmt.Println("failed to initialize logger:", err)
-		os.Exit(1)
+func (a *App) Run(ctx context.Context) {
+	if err := a.server.Run(ctx); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		fmt.Println("run application:", err)
 	}
 
-	a.logger.Debug("initializing connection pool")
-	if err := a.initPostgresPool(); err != nil {
-		a.logger.Fatal("initialize pool", zap.Error(err))
+	closerCtx, closerCancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second) //nolint:mnd // todo
+	defer closerCancel()
+
+	if err := closer.CloseAll(closerCtx); err != nil {
+		fmt.Println("failed to close deps:", err)
 	}
-
-	a.logger.Debug("initializing features")
-	registry := a.initFeatures()
-
-	a.logger.Debug("initializing gRPC server")
-	a.initGRPCServer(registry)
-
-	return a.server.Run(a.ctx)
 }
 
-func (a *App) Close() {
-	a.pool.Close()
-	a.logger.Close()
+func (a *App) initGRPCServer() {
+	config := grpcserver.NewConfigMust()
+	server := grpcserver.New(
+		config,
+		a.diContainer.log,
+		interceptor.RequestID(),
+		interceptor.Logger(a.diContainer.Logger()),
+		interceptor.Recovery(),
+		interceptor.Trace(),
+	)
+
+	server.RegisterServices(a.diContainer.Methods().RegisterAll)
+
+	a.server = server
 }

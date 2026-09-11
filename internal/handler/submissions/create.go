@@ -8,7 +8,7 @@ import (
 	submissions_v1 "github.com/markgredasov/viewcode-submissions/pkg/api/v1"
 )
 
-func (h *handler) Create(ctx context.Context, req *submissions_v1.CreateRequest) (*submissions_v1.CreateResponse, error) {
+func (h *Handler) Create(ctx context.Context, req *submissions_v1.CreateRequest) (*submissions_v1.CreateResponse, error) {
 	if err := request.Validate(req); err != nil {
 		return nil, response.GRPCError(err, "validate request")
 	}

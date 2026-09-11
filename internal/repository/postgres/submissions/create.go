@@ -6,7 +6,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *repository) Create(ctx context.Context, submission submission.Submission) (submission.Submission, error) {
+func (r *Repository) Create(ctx context.Context, submission submission.Submission) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

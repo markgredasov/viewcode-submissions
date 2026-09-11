@@ -7,7 +7,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-type service struct {
+type Service struct {
 	repository SubmissionsRepository
 }
 
@@ -17,8 +17,8 @@ type SubmissionsRepository interface {
 	ListAll(ctx context.Context) ([]submission.Submission, error)
 }
 
-func New(repository SubmissionsRepository) *service {
-	return &service{
+func New(repository SubmissionsRepository) *Service {
+	return &Service{
 		repository: repository,
 	}
 }

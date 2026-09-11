@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type handler struct {
+type Handler struct {
 	service SubmissionsService
 }
 
@@ -19,13 +19,13 @@ type SubmissionsService interface {
 	ListAll(ctx context.Context) ([]submission.Submission, error)
 }
 
-func New(service SubmissionsService) *handler {
-	return &handler{
+func New(service SubmissionsService) *Handler {
+	return &Handler{
 		service: service,
 	}
 }
 
-func (h *handler) Register() registry.RegisterFunc {
+func (h *Handler) Register() registry.RegisterFunc {
 	return func(s *grpc.Server) {
 		submissions_v1.RegisterSubmissionsServiceServer(s, h)
 	}

@@ -8,7 +8,7 @@ import (
 	submissions_v1 "github.com/markgredasov/viewcode-submissions/pkg/api/v1"
 )
 
-func (h *handler) GetByID(ctx context.Context, req *submissions_v1.GetByIDRequest) (*submissions_v1.GetByIDResponse, error) {
+func (h *Handler) GetByID(ctx context.Context, req *submissions_v1.GetByIDRequest) (*submissions_v1.GetByIDResponse, error) {
 	if err := request.Validate(req); err != nil {
 		return nil, response.GRPCError(err, "validate request")
 	}

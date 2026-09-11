@@ -7,12 +7,12 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-type repository struct {
+type Repository struct {
 	pool dbpostgres.Pool
 }
 
-func New(pool dbpostgres.Pool) *repository {
-	return &repository{
+func New(pool dbpostgres.Pool) *Repository {
+	return &Repository{
 		pool: pool,
 	}
 }
