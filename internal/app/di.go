@@ -39,7 +39,14 @@ func (d *diContainer) initCommonDeps(ctx context.Context) {
 }
 
 func (d *diContainer) initLogger(_ context.Context) {
-	_ = d.Logger()
+	config := logger.NewConfigMust()
+	log, err := logger.NewLogger(config)
+	if err != nil {
+		fmt.Println("failed to initialize logger:", err)
+		os.Exit(1)
+	}
+
+	d.log = log
 }
 
 func (d *diContainer) initPool(ctx context.Context) {
@@ -60,18 +67,7 @@ func (d *diContainer) initPool(ctx context.Context) {
 
 func (d *diContainer) Logger() *logger.Logger {
 	if d.log == nil {
-		config := logger.NewConfigMust()
-		log, err := logger.NewLogger(config)
-		if err != nil {
-			fmt.Println("failed to initialize logger:", err)
-			os.Exit(1)
-		}
-
-		closer.Add("logger", func(ctx context.Context) error {
-			return log.Close()
-		})
-
-		d.log = log
+		panic("logger must be initialized with ctx before all initializations in container")
 	}
 
 	return d.log

@@ -14,10 +14,6 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-var (
-	loggerKey string = "logger"
-)
-
 func RequestID() Unary {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		const requestIDHeader = "x-request-id"
@@ -43,13 +39,12 @@ func Logger(l *logger.Logger) Unary {
 			return nil, errs.Internal("logger interceptor", err)
 		}
 
-		logger := l.With(
+		log := l.With(
 			zap.String("Request-ID", requestID),
 			zap.String("Method", info.FullMethod),
 		)
 
-		//nolint:staticcheck // not needed
-		ctx = context.WithValue(ctx, loggerKey, logger)
+		ctx = log.InContext(ctx)
 
 		return handler(ctx, req)
 	}

@@ -38,6 +38,8 @@ func (a *App) initDeps() {
 }
 
 func (a *App) Run(ctx context.Context) {
+	ctx = a.diContainer.Logger().InContext(ctx)
+
 	if err := a.server.Run(ctx); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Println("run application:", err)
 	}

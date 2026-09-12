@@ -3,10 +3,12 @@ package closer
 import (
 	"context"
 	"errors"
-	"fmt"
 	"slices"
 	"sync"
 	"time"
+
+	"github.com/markgredasov/viewcode-submissions/internal/logger"
+	"go.uber.org/zap"
 )
 
 type closeFn struct {
@@ -45,6 +47,8 @@ func (c *closer) add(name string, fn func(context.Context) error) {
 func (c *closer) closeAll(ctx context.Context) error {
 	var result error
 
+	log := logger.FromContext(ctx)
+
 	c.once.Do(func() {
 		c.mu.Lock()
 		funcs := c.funcs
@@ -55,7 +59,7 @@ func (c *closer) closeAll(ctx context.Context) error {
 			return
 		}
 
-		fmt.Println("closing all resources")
+		log.Debug("closing all resources")
 
 		var errs []error
 
@@ -63,14 +67,14 @@ func (c *closer) closeAll(ctx context.Context) error {
 			start := time.Now()
 
 			if err := f.fn(ctx); err != nil {
-				fmt.Println("failed to close resource", f.name, err)
+				log.Error("failed to close resource", zap.String("name", f.name), zap.Error(err))
 				errs = append(errs, err)
 			} else {
-				fmt.Println("resource closed", f.name, time.Since(start))
+				log.Debug("resource closed", zap.String("name", f.name), zap.Duration("duration", time.Since(start)))
 			}
 		}
 
-		fmt.Println("all resources closed")
+		log.Debug("all resources closed")
 		result = errors.Join(errs...)
 	})
 
