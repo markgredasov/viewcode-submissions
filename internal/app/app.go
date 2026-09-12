@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/markgredasov/viewcode-submissions/internal/app/closer"
+	"github.com/markgredasov/viewcode-submissions/internal/logger"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor/iplimiter"
 	grpcserver "github.com/markgredasov/viewcode-submissions/internal/server/grpc/server"
 )
 
@@ -19,27 +21,26 @@ type App struct {
 
 func New(ctx context.Context) *App {
 	a := &App{
-		diContainer: newDIContainer(ctx),
+		diContainer: newDIContainer(),
 	}
 
-	a.initDeps()
+	a.initDeps(ctx)
 
 	return a
 }
 
-func (a *App) initDeps() {
-	inits := []func(){
+func (a *App) initDeps(ctx context.Context) {
+	inits := []func(context.Context){
+		a.diContainer.initPool,
 		a.initGRPCServer,
 	}
 
 	for _, fn := range inits {
-		fn()
+		fn(ctx)
 	}
 }
 
 func (a *App) Run(ctx context.Context) {
-	ctx = a.diContainer.Logger().InContext(ctx)
-
 	if err := a.server.Run(ctx); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		fmt.Println("run application:", err)
 	}
@@ -52,14 +53,20 @@ func (a *App) Run(ctx context.Context) {
 	}
 }
 
-func (a *App) initGRPCServer() {
-	config := grpcserver.NewConfigMust()
+func (a *App) initGRPCServer(ctx context.Context) {
+	configIPLimiter := iplimiter.NewConfigMust()
+	ipLimiter := iplimiter.New(configIPLimiter)
+
+	log := logger.FromContext(ctx)
+
+	configServer := grpcserver.NewConfigMust()
 	server := grpcserver.New(
-		config,
-		a.diContainer.log,
+		configServer,
+		log,
 		interceptor.RequestID(),
-		interceptor.Logger(a.diContainer.Logger()),
+		interceptor.Logger(log),
 		interceptor.Recovery(),
+		interceptor.RateLimiter(ipLimiter),
 		interceptor.Trace(),
 	)
 

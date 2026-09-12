@@ -14,6 +14,7 @@ var (
 	ErrConflict        = errors.New("conflict")
 	ErrInternal        = errors.New("internal")
 	ErrForbidden       = errors.New("forbidden")
+	ErrTooManyRequests = errors.New("too many requests")
 )
 
 func InvalidArgument(msg string) error {
@@ -46,4 +47,8 @@ func Internal(msg string, err error) error {
 
 func Forbidden(msg string) error {
 	return fmt.Errorf("%s: %w", msg, ErrForbidden)
+}
+
+func TooManyRequests() error {
+	return fmt.Errorf("%w", ErrTooManyRequests)
 }

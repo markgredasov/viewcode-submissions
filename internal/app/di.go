@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/markgredasov/viewcode-submissions/internal/app/closer"
@@ -16,7 +15,6 @@ import (
 )
 
 type diContainer struct {
-	log  *logger.Logger
 	pool *dbpostgres.ConnectionPool
 
 	submissionsRepo    *submissionsrepository.Repository
@@ -26,34 +24,18 @@ type diContainer struct {
 	methods *registry.Registry
 }
 
-func newDIContainer(ctx context.Context) *diContainer {
+func newDIContainer() *diContainer {
 	d := &diContainer{}
-	d.initCommonDeps(ctx)
 
 	return d
 }
 
-func (d *diContainer) initCommonDeps(ctx context.Context) {
-	d.initLogger(ctx)
-	d.initPool(ctx)
-}
-
-func (d *diContainer) initLogger(_ context.Context) {
-	config := logger.NewConfigMust()
-	log, err := logger.NewLogger(config)
-	if err != nil {
-		fmt.Println("failed to initialize logger:", err)
-		os.Exit(1)
-	}
-
-	d.log = log
-}
-
 func (d *diContainer) initPool(ctx context.Context) {
+	log := logger.FromContext(ctx)
 	config := dbpostgres.NewConfigMust()
 	pool, err := dbpostgres.NewConnectionPool(ctx, config)
 	if err != nil {
-		d.log.Error("initialize pool", zap.Error(err))
+		log.Error("initialize pool", zap.Error(err))
 		os.Exit(1)
 	}
 
@@ -63,14 +45,6 @@ func (d *diContainer) initPool(ctx context.Context) {
 	})
 
 	d.pool = pool
-}
-
-func (d *diContainer) Logger() *logger.Logger {
-	if d.log == nil {
-		panic("logger must be initialized with ctx before all initializations in container")
-	}
-
-	return d.log
 }
 
 func (d *diContainer) Pool() *dbpostgres.ConnectionPool {
@@ -108,7 +82,7 @@ func (d *diContainer) SubmissionsHandler() *submissionshandler.Handler {
 func (d *diContainer) Methods() *registry.Registry {
 	if d.methods == nil {
 		d.methods = registry.New().Add(
-			d.submissionsHandler.Register(),
+			d.SubmissionsHandler().Register(),
 		)
 	}
 

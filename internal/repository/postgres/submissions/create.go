@@ -13,7 +13,7 @@ func (r *Repository) Create(ctx context.Context, submission submission.Submissio
 	sqlQuery := `
 		INSERT INTO users.submissions (id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		RETURNING id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms;
+		RETURNING id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms, created_at, updated_at;
 	`
 
 	row := r.pool.GetQuerier(ctx).QueryRow(ctx, sqlQuery, submission.ID, submission.UserID, submission.ProblemID,

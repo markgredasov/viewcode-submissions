@@ -16,7 +16,7 @@ func (r *Repository) GetByID(ctx context.Context, id model.UUID) (submission.Sub
 	defer cancel()
 
 	sqlQuery := `
-		SELECT id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms
+		SELECT id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms, created_at, updated_at
 		FROM users.submissions
 		WHERE id = $1;
 	`

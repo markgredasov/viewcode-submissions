@@ -11,7 +11,7 @@ func (r *Repository) ListAll(ctx context.Context) ([]submission.Submission, erro
 	defer cancel()
 
 	sqlQuery := `
-		SELECT id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms
+		SELECT id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms, created_at, updated_at
 		FROM users.submissions;
 	`
 

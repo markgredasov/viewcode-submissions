@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS users.submissions (
     condition           users.submission_status       NOT NULL,
     lang                users.available_languages     NOT NULL,
     execution_time_ms   INT,
-    created_at          TIMESTAMP                     NOT NULL          DEFAULT NOW(),
-    updated_at          TIMESTAMP                     NOT NULL          DEFAULT NOW()
+    created_at          TIMESTAMPTZ                   NOT NULL          DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ                   NOT NULL          DEFAULT NOW()
 );
 
 -- +goose Down

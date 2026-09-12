@@ -3,15 +3,18 @@ package interceptor
 import (
 	"context"
 	"fmt"
+	"net"
 	"time"
 
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
+	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor/iplimiter"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/response"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/peer"
 )
 
 func RequestID() Unary {
@@ -20,7 +23,7 @@ func RequestID() Unary {
 
 		requestID, err := getFromMetadata(ctx, requestIDHeader)
 		if err != nil {
-			return nil, errs.Internal("request id interceptor", err)
+			return nil, response.GRPCError(errs.Internal("request id interceptor", err), "get from metadata")
 		}
 
 		ctx = metadata.NewIncomingContext(ctx, metadata.Pairs(requestIDHeader, requestID))
@@ -36,7 +39,7 @@ func Logger(l *logger.Logger) Unary {
 
 		requestID, err := getFromMetadata(ctx, requestIDHeader)
 		if err != nil {
-			return nil, errs.Internal("logger interceptor", err)
+			return nil, response.GRPCError(errs.Internal("logger interceptor", err), "failed to get from metadata")
 		}
 
 		log := l.With(
@@ -59,6 +62,27 @@ func Recovery() Unary {
 				err = response.Panic(log, r, "during handle gRPC request got unexpected panic")
 			}
 		}()
+
+		return handler(ctx, req)
+	}
+}
+
+func RateLimiter(il *iplimiter.IPLimiter) Unary {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		p, ok := peer.FromContext(ctx)
+		if !ok {
+			err := fmt.Errorf("no peer found")
+			return nil, response.GRPCError(errs.Internal("no peer found", err), "no peer found")
+		}
+
+		ip, _, err := net.SplitHostPort(p.Addr.String())
+		if err != nil {
+			ip = p.Addr.String()
+		}
+
+		if !il.Get(ip).Allow() {
+			return nil, response.GRPCError(errs.TooManyRequests(), "too many requests")
+		}
 
 		return handler(ctx, req)
 	}

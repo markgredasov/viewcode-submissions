@@ -25,6 +25,8 @@ func GRPCError(err error, msg string) error {
 		statusCode = codes.Unimplemented
 	case errors.Is(err, errs.ErrForbidden):
 		statusCode = codes.PermissionDenied
+	case errors.Is(err, errs.ErrTooManyRequests):
+		statusCode = codes.ResourceExhausted
 	default:
 		statusCode = codes.Internal
 	}

@@ -28,6 +28,8 @@ func scanSubmission(row pgx.Row) (submission.Submission, error) {
 		&rec.Status,
 		&rec.Language,
 		&rec.ExecutionTimeInMS,
+		&rec.CreatedAt,
+		&rec.UpdatedAt,
 	)
 	if err != nil {
 		return submission.Submission{}, errs.Internal("scan submission", err)
