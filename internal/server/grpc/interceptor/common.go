@@ -112,7 +112,7 @@ func RateLimiter(il *iplimiter.IPLimiter) Unary {
 		}
 
 		if !il.Get(ip).Allow() {
-			return nil, h.GRPCError(errs.TooManyRequests(), "too many requests")
+			return nil, h.GRPCError(errs.TooManyRequests(), "rate limiter")
 		}
 
 		return handler(ctx, req)

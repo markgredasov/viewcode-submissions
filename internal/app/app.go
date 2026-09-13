@@ -57,6 +57,11 @@ func (a *App) initGRPCServer(ctx context.Context) {
 	configIPLimiter := iplimiter.NewConfigMust()
 	ipLimiter := iplimiter.New(configIPLimiter)
 
+	closer.Add("ip limiter", func(_ context.Context) error {
+		ipLimiter.Close()
+		return nil
+	})
+
 	log := logger.FromContext(ctx)
 
 	configServer := grpcserver.NewConfigMust()

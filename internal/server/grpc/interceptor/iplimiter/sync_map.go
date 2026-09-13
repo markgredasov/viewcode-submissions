@@ -20,3 +20,13 @@ func (s *typedSyncMap[K, V]) LoadOrStore(key K, value V) (V, bool) {
 	a, loaded := s.m.LoadOrStore(key, value)
 	return a.(V), loaded //nolint:errcheck // err checking not needed in actual realization
 }
+
+func (s *typedSyncMap[K, V]) Range(f func(K, V) bool) {
+	s.m.Range(func(key, value any) bool {
+		return f(key.(K), value.(V)) //nolint:errcheck // err checking not needed in actual realization
+	})
+}
+
+func (s *typedSyncMap[K, V]) Delete(key K) {
+	s.m.Delete(key)
+}

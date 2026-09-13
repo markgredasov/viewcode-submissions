@@ -2,14 +2,17 @@ package iplimiter
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/time/rate"
 )
 
 type Config struct {
-	Rps   rate.Limit `envconfig:"RPS" required:"true"`
-	Burst int        `envconfig:"BURST" required:"true"`
+	Rps             rate.Limit    `envconfig:"RPS" required:"true"`
+	Burst           int           `envconfig:"BURST" required:"true"`
+	TTL             time.Duration `envconfig:"TTL" required:"true"`
+	CleanupInterval time.Duration `envconfig:"CLEANUP_INTERVAL" required:"true"`
 }
 
 func NewConfig() (Config, error) {
