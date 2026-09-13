@@ -66,8 +66,8 @@ func (a *App) initGRPCServer(ctx context.Context) {
 		interceptor.RequestID(),
 		interceptor.Logger(log),
 		interceptor.Recovery(),
-		interceptor.RateLimiter(ipLimiter),
 		interceptor.Trace(),
+		interceptor.RateLimiter(ipLimiter),
 	)
 
 	server.RegisterServices(a.diContainer.Methods().RegisterAll)

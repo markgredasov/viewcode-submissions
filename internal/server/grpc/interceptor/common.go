@@ -6,9 +6,9 @@ import (
 	"net"
 	"time"
 
+	"github.com/google/uuid"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
-	"github.com/markgredasov/viewcode-submissions/internal/model"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/interceptor/iplimiter"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/response"
 	"go.uber.org/zap"
@@ -21,12 +21,19 @@ func RequestID() Unary {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		const requestIDHeader = "x-request-id"
 
-		requestID, err := getFromMetadata(ctx, requestIDHeader)
-		if err != nil {
-			return nil, response.GRPCError(errs.Internal("request id interceptor", err), "get from metadata")
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			md = metadata.MD{}
 		}
 
-		ctx = metadata.NewIncomingContext(ctx, metadata.Pairs(requestIDHeader, requestID))
+		requestID := getValFromMetadata(md, requestIDHeader)
+		if requestID == "" {
+			requestID = uuid.NewString()
+		}
+
+		md.Set(requestIDHeader, requestID)
+
+		ctx = metadata.NewIncomingContext(ctx, md)
 		ctx = metadata.AppendToOutgoingContext(ctx, requestIDHeader, requestID)
 
 		return handler(ctx, req)
@@ -37,10 +44,7 @@ func Logger(l *logger.Logger) Unary {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		const requestIDHeader = "x-request-id"
 
-		requestID, err := getFromMetadata(ctx, requestIDHeader)
-		if err != nil {
-			return nil, response.GRPCError(errs.Internal("logger interceptor", err), "failed to get from metadata")
-		}
+		requestID := metadata.ValueFromIncomingContext(ctx, requestIDHeader)[0]
 
 		log := l.With(
 			zap.String("Request-ID", requestID),
@@ -56,33 +60,13 @@ func Logger(l *logger.Logger) Unary {
 func Recovery() Unary {
 	//nolint:nonamedreturns // more readable to use named returns here
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
-		log := logger.FromContext(ctx)
+		h := response.NewHandler(logger.FromContext(ctx))
+
 		defer func() {
 			if r := recover(); r != nil {
-				err = response.Panic(log, r, "during handle gRPC request got unexpected panic")
+				err = h.Panic(r, "during handle gRPC request got unexpected panic")
 			}
 		}()
-
-		return handler(ctx, req)
-	}
-}
-
-func RateLimiter(il *iplimiter.IPLimiter) Unary {
-	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-		p, ok := peer.FromContext(ctx)
-		if !ok {
-			err := fmt.Errorf("no peer found")
-			return nil, response.GRPCError(errs.Internal("no peer found", err), "no peer found")
-		}
-
-		ip, _, err := net.SplitHostPort(p.Addr.String())
-		if err != nil {
-			ip = p.Addr.String()
-		}
-
-		if !il.Get(ip).Allow() {
-			return nil, response.GRPCError(errs.TooManyRequests(), "too many requests")
-		}
 
 		return handler(ctx, req)
 	}
@@ -112,18 +96,35 @@ func Trace() Unary {
 	}
 }
 
-func getFromMetadata(ctx context.Context, header string) (string, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		err := fmt.Errorf("failed to get metadata")
-		return "", errs.Internal("get from metadata", err)
-	}
+func RateLimiter(il *iplimiter.IPLimiter) Unary {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		h := response.NewHandler(logger.FromContext(ctx))
 
+		p, ok := peer.FromContext(ctx)
+		if !ok {
+			err := fmt.Errorf("no peer found")
+			return nil, h.GRPCError(errs.Internal("no peer found", err), "no peer found")
+		}
+
+		ip, _, err := net.SplitHostPort(p.Addr.String())
+		if err != nil {
+			ip = p.Addr.String()
+		}
+
+		if !il.Get(ip).Allow() {
+			return nil, h.GRPCError(errs.TooManyRequests(), "too many requests")
+		}
+
+		return handler(ctx, req)
+	}
+}
+
+func getValFromMetadata(md metadata.MD, header string) string {
 	vals := md.Get(header)
 	if len(vals) == 0 {
-		vals = []string{model.NewUUID().String()}
+		return ""
 	}
 	val := vals[0]
 
-	return val, nil
+	return val
 }
