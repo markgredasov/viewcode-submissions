@@ -1,8 +1,10 @@
 package submission
 
 import (
+	"slices"
 	"time"
 
+	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
 )
 
@@ -59,4 +61,29 @@ func New(
 func (s *Submission) WithID(id model.UUID) *Submission {
 	s.ID = id
 	return s
+}
+
+func (s *Submission) GetAvailableNextStatuses() []Status {
+	switch s.Status {
+	case StatusPending:
+		return []Status{StatusRunning}
+	case StatusRunning:
+		return []Status{StatusAccepted, StatusInternal, StatusTimeout, StatusWrongAnswer}
+	default:
+		return []Status{}
+	}
+}
+
+func (s *Submission) AdvanceTo(next Status) error {
+	if !next.IsValid() {
+		return errs.InvalidArgument("unknown submissions status: " + next.String())
+	}
+
+	statuses := s.GetAvailableNextStatuses()
+	if !slices.Contains(statuses, next) {
+		return errs.Conflict("cannot transition submission status from " + s.Status.String() + " to " + next.String())
+	}
+
+	s.Status = next
+	return nil
 }

@@ -48,7 +48,7 @@ func NewStatus(status string) (Status, error) {
 	return statusValueObject, nil
 }
 
-func NewStatusFromGRPC(grpcModel submissions_v1.SubmissionStatus) (Status, error) {
+func ConvertStatusFromGRPC(grpcModel submissions_v1.SubmissionStatus) (Status, error) {
 	statusModel, ok := statusGRPCModelToModel[grpcModel]
 	if !ok {
 		return "", fmt.Errorf("status: %s: %w", grpcModel.String(), errs.ErrInvalidArgument)

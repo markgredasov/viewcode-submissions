@@ -17,6 +17,7 @@ type SubmissionsService interface {
 	Create(ctx context.Context, submission submission.Submission) (submission.Submission, error)
 	GetByID(ctx context.Context, id string) (submission.Submission, error)
 	ListAll(ctx context.Context) ([]submission.Submission, error)
+	UpdateStatus(ctx context.Context, id string, nextStatus submission.Status) (submission.Submission, error)
 }
 
 func New(service SubmissionsService) *Handler {

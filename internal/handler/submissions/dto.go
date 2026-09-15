@@ -99,3 +99,16 @@ func listAllToResponse(m []submission.Submission) (*submissions_v1.ListAllRespon
 
 	return resp, nil
 }
+
+func updateStatusToResponse(m submission.Submission) (*submissions_v1.UpdateStatusResponse, error) {
+	s, err := toSubmission(m)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &submissions_v1.UpdateStatusResponse{
+		Submission: s,
+	}
+
+	return resp, nil
+}

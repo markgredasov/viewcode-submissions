@@ -65,7 +65,7 @@ func (d *diContainer) SubmissionsRepository() *submissionsrepository.Repository 
 
 func (d *diContainer) SubmissionsService() *submissionsservice.Service {
 	if d.submissionsService == nil {
-		d.submissionsService = submissionsservice.New(d.SubmissionsRepository())
+		d.submissionsService = submissionsservice.New(d.SubmissionsRepository(), d.Pool())
 	}
 
 	return d.submissionsService
