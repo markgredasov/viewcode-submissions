@@ -12,7 +12,7 @@ service SubmissionsService {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc GetByID(GetByIDRequest) returns (GetByIDResponse);
     rpc ListAll(google.protobuf.Empty) returns (ListAllResponse);
-    rpc UpdateStatus(UpdateStatusRequest) returns (UpdateStatusResponse);
+    rpc SetRunning(SetRunningRequest) returns (SetRunningResponse);
 }
 
 enum SubmissionStatus {
@@ -105,16 +105,12 @@ message ListAllResponse {
     repeated Submission submissions = 1;
 }
 
-message UpdateStatusRequest {
+message SetRunningRequest {
     string id = 1 [
         (validate.rules).string.uuid = true
     ];
-
-    SubmissionStatus status = 2 [
-        (validate.rules).enum = {not_in: [0]}
-    ];
 }
 
-message UpdateStatusResponse {
+message SetRunningResponse {
     Submission submission = 1;
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (s *Service) UpdateStatus(ctx context.Context, id string, nextStatus submission.Status) (submission.Submission, error) {
+func (s *Service) SetRunning(ctx context.Context, id string) (submission.Submission, error) {
 	uid, err := model.ToUUID(id)
 	if err != nil {
 		return submission.Submission{}, err
@@ -21,15 +21,12 @@ func (s *Service) UpdateStatus(ctx context.Context, id string, nextStatus submis
 			return err
 		}
 
-		if err = subm.AdvanceTo(nextStatus); err != nil {
+		if err = subm.AdvanceTo(submission.StatusRunning); err != nil {
 			return err
 		}
 
-		if err = s.repository.UpdateStatus(ctx, uid, subm.Status); err != nil {
-			return err
-		}
-
-		if updated, err = s.repository.GetByID(ctx, uid); err != nil {
+		updated, err = s.repository.UpdateStatus(ctx, uid, subm.Status, subm.TestsPassed, subm.ExecutionTimeInMS)
+		if err != nil {
 			return err
 		}
 

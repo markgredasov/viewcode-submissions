@@ -16,7 +16,7 @@ type SubmissionsRepository interface {
 	Create(ctx context.Context, submission submission.Submission) (submission.Submission, error)
 	GetByID(ctx context.Context, id model.UUID) (submission.Submission, error)
 	ListAll(ctx context.Context) ([]submission.Submission, error)
-	UpdateStatus(ctx context.Context, id model.UUID, status submission.Status) error
+	UpdateStatus(ctx context.Context, id model.UUID, status submission.Status, testsPassed int, executionTimeInMS int) (submission.Submission, error)
 }
 
 type TxManager interface {

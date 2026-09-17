@@ -100,13 +100,13 @@ func listAllToResponse(m []submission.Submission) (*submissions_v1.ListAllRespon
 	return resp, nil
 }
 
-func updateStatusToResponse(m submission.Submission) (*submissions_v1.UpdateStatusResponse, error) {
+func setRunningToResponse(m submission.Submission) (*submissions_v1.SetRunningResponse, error) {
 	s, err := toSubmission(m)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &submissions_v1.UpdateStatusResponse{
+	resp := &submissions_v1.SetRunningResponse{
 		Submission: s,
 	}
 

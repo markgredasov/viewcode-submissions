@@ -936,22 +936,22 @@ var _ interface {
 	ErrorName() string
 } = ListAllResponseValidationError{}
 
-// Validate checks the field values on UpdateStatusRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateStatusRequest) Validate() error {
+// Validate checks the field values on SetRunningRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SetRunningRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateStatusRequest with the rules
+// ValidateAll checks the field values on SetRunningRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateStatusRequestMultiError, or nil if none found.
-func (m *UpdateStatusRequest) ValidateAll() error {
+// SetRunningRequestMultiError, or nil if none found.
+func (m *SetRunningRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateStatusRequest) validate(all bool) error {
+func (m *SetRunningRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -959,7 +959,7 @@ func (m *UpdateStatusRequest) validate(all bool) error {
 	var errors []error
 
 	if err := m._validateUuid(m.GetId()); err != nil {
-		err = UpdateStatusRequestValidationError{
+		err = SetRunningRequestValidationError{
 			field:  "Id",
 			reason: "value must be a valid UUID",
 			cause:  err,
@@ -970,25 +970,14 @@ func (m *UpdateStatusRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := _UpdateStatusRequest_Status_NotInLookup[m.GetStatus()]; ok {
-		err := UpdateStatusRequestValidationError{
-			field:  "Status",
-			reason: "value must not be in list [STATUS_UNSPECIFIED]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
-		return UpdateStatusRequestMultiError(errors)
+		return SetRunningRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-func (m *UpdateStatusRequest) _validateUuid(uuid string) error {
+func (m *SetRunningRequest) _validateUuid(uuid string) error {
 	if matched := _submissions_uuidPattern.MatchString(uuid); !matched {
 		return errors.New("invalid uuid format")
 	}
@@ -996,13 +985,13 @@ func (m *UpdateStatusRequest) _validateUuid(uuid string) error {
 	return nil
 }
 
-// UpdateStatusRequestMultiError is an error wrapping multiple validation
-// errors returned by UpdateStatusRequest.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateStatusRequestMultiError []error
+// SetRunningRequestMultiError is an error wrapping multiple validation errors
+// returned by SetRunningRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SetRunningRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateStatusRequestMultiError) Error() string {
+func (m SetRunningRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1011,11 +1000,11 @@ func (m UpdateStatusRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateStatusRequestMultiError) AllErrors() []error { return m }
+func (m SetRunningRequestMultiError) AllErrors() []error { return m }
 
-// UpdateStatusRequestValidationError is the validation error returned by
-// UpdateStatusRequest.Validate if the designated constraints aren't met.
-type UpdateStatusRequestValidationError struct {
+// SetRunningRequestValidationError is the validation error returned by
+// SetRunningRequest.Validate if the designated constraints aren't met.
+type SetRunningRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1023,24 +1012,24 @@ type UpdateStatusRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateStatusRequestValidationError) Field() string { return e.field }
+func (e SetRunningRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateStatusRequestValidationError) Reason() string { return e.reason }
+func (e SetRunningRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateStatusRequestValidationError) Cause() error { return e.cause }
+func (e SetRunningRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateStatusRequestValidationError) Key() bool { return e.key }
+func (e SetRunningRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateStatusRequestValidationError) ErrorName() string {
-	return "UpdateStatusRequestValidationError"
+func (e SetRunningRequestValidationError) ErrorName() string {
+	return "SetRunningRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateStatusRequestValidationError) Error() string {
+func (e SetRunningRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1052,14 +1041,14 @@ func (e UpdateStatusRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateStatusRequest.%s: %s%s",
+		"invalid %sSetRunningRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateStatusRequestValidationError{}
+var _ error = SetRunningRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1067,28 +1056,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateStatusRequestValidationError{}
+} = SetRunningRequestValidationError{}
 
-var _UpdateStatusRequest_Status_NotInLookup = map[SubmissionStatus]struct{}{
-	0: {},
-}
-
-// Validate checks the field values on UpdateStatusResponse with the rules
+// Validate checks the field values on SetRunningResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateStatusResponse) Validate() error {
+func (m *SetRunningResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateStatusResponse with the rules
+// ValidateAll checks the field values on SetRunningResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateStatusResponseMultiError, or nil if none found.
-func (m *UpdateStatusResponse) ValidateAll() error {
+// SetRunningResponseMultiError, or nil if none found.
+func (m *SetRunningResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateStatusResponse) validate(all bool) error {
+func (m *SetRunningResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1099,7 +1084,7 @@ func (m *UpdateStatusResponse) validate(all bool) error {
 		switch v := interface{}(m.GetSubmission()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateStatusResponseValidationError{
+				errors = append(errors, SetRunningResponseValidationError{
 					field:  "Submission",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1107,7 +1092,7 @@ func (m *UpdateStatusResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateStatusResponseValidationError{
+				errors = append(errors, SetRunningResponseValidationError{
 					field:  "Submission",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1116,7 +1101,7 @@ func (m *UpdateStatusResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetSubmission()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateStatusResponseValidationError{
+			return SetRunningResponseValidationError{
 				field:  "Submission",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1125,19 +1110,19 @@ func (m *UpdateStatusResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateStatusResponseMultiError(errors)
+		return SetRunningResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateStatusResponseMultiError is an error wrapping multiple validation
-// errors returned by UpdateStatusResponse.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateStatusResponseMultiError []error
+// SetRunningResponseMultiError is an error wrapping multiple validation errors
+// returned by SetRunningResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SetRunningResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateStatusResponseMultiError) Error() string {
+func (m SetRunningResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1146,11 +1131,11 @@ func (m UpdateStatusResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateStatusResponseMultiError) AllErrors() []error { return m }
+func (m SetRunningResponseMultiError) AllErrors() []error { return m }
 
-// UpdateStatusResponseValidationError is the validation error returned by
-// UpdateStatusResponse.Validate if the designated constraints aren't met.
-type UpdateStatusResponseValidationError struct {
+// SetRunningResponseValidationError is the validation error returned by
+// SetRunningResponse.Validate if the designated constraints aren't met.
+type SetRunningResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1158,24 +1143,24 @@ type UpdateStatusResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateStatusResponseValidationError) Field() string { return e.field }
+func (e SetRunningResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateStatusResponseValidationError) Reason() string { return e.reason }
+func (e SetRunningResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateStatusResponseValidationError) Cause() error { return e.cause }
+func (e SetRunningResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateStatusResponseValidationError) Key() bool { return e.key }
+func (e SetRunningResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateStatusResponseValidationError) ErrorName() string {
-	return "UpdateStatusResponseValidationError"
+func (e SetRunningResponseValidationError) ErrorName() string {
+	return "SetRunningResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateStatusResponseValidationError) Error() string {
+func (e SetRunningResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1187,14 +1172,14 @@ func (e UpdateStatusResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateStatusResponse.%s: %s%s",
+		"invalid %sSetRunningResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateStatusResponseValidationError{}
+var _ error = SetRunningResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1202,4 +1187,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateStatusResponseValidationError{}
+} = SetRunningResponseValidationError{}

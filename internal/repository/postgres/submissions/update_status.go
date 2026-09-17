@@ -3,12 +3,12 @@ package submissionsrepository
 import (
 	"context"
 
-	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
 	"github.com/markgredasov/viewcode-submissions/internal/model"
 	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *Repository) UpdateStatus(ctx context.Context, id model.UUID, status submission.Status) error {
+func (r *Repository) UpdateStatus(ctx context.Context, id model.UUID, status submission.Status,
+	testsPassed int, executionTimeInMS int) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
@@ -17,13 +17,14 @@ func (r *Repository) UpdateStatus(ctx context.Context, id model.UUID, status sub
 	sqlQuery := `
 		UPDATE users.submissions
 		SET condition = $1,
+			tests_passed = $2,
+			execution_time_ms = $3,
 			updated_at = NOW()
-		WHERE id = $2;
+		WHERE id = $4
+		RETURNING id, user_id, problem_id, tests_total, tests_passed, condition, lang, execution_time_ms, created_at, updated_at;
 	`
 
-	if _, err := q.Exec(ctx, sqlQuery, status.String(), id.String()); err != nil {
-		return errs.Internal("update submission status", err)
-	}
+	row := q.QueryRow(ctx, sqlQuery, status.String(), testsPassed, executionTimeInMS, id.String())
 
-	return nil
+	return scanSubmission(row)
 }

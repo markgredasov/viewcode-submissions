@@ -70,10 +70,18 @@ func (s Status) IsValid() bool {
 	return false
 }
 
+func (s Status) IsTerminal() bool {
+	switch s {
+	case StatusAccepted, StatusWrongAnswer, StatusTimeout, StatusInternal:
+		return true
+	}
+	return false
+}
+
 func (s Status) GRPCModel() (submissions_v1.SubmissionStatus, error) {
 	grpcModel, ok := statusModelToGRPCModel[s]
 	if !ok {
-		return submissions_v1.SubmissionStatus_STATUS_UNSPECIFIED, fmt.Errorf("no such status: %s", string(s))
+		return submissions_v1.SubmissionStatus_STATUS_UNSPECIFIED, fmt.Errorf("no such status: %s: %w", string(s), errs.ErrInvalidArgument)
 	}
 	return grpcModel, nil
 }
