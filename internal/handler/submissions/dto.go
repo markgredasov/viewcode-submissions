@@ -112,3 +112,16 @@ func setRunningToResponse(m submission.Submission) (*submissions_v1.SetRunningRe
 
 	return resp, nil
 }
+
+func setResultToResponse(m submission.Submission) (*submissions_v1.SetResultResponse, error) {
+	s, err := toSubmission(m)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &submissions_v1.SetResultResponse{
+		Submission: s,
+	}
+
+	return resp, nil
+}

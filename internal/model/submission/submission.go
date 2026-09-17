@@ -81,7 +81,7 @@ func (s *Submission) AdvanceTo(next Status) error {
 
 	statuses := s.GetAvailableNextStatuses()
 	if !slices.Contains(statuses, next) {
-		return errs.Conflict("cannot transition submission status from " + s.Status.String() + " to " + next.String())
+		return errs.InvalidArgument("cannot transition submission status from " + s.Status.String() + " to " + next.String())
 	}
 
 	s.Status = next

@@ -18,6 +18,7 @@ type SubmissionsService interface {
 	GetByID(ctx context.Context, id string) (submission.Submission, error)
 	ListAll(ctx context.Context) ([]submission.Submission, error)
 	SetRunning(ctx context.Context, id string) (submission.Submission, error)
+	SetResult(ctx context.Context, id string, status submission.Status, testsPassed int32, executionTimeInMS int32) (submission.Submission, error)
 }
 
 func New(service SubmissionsService) *Handler {

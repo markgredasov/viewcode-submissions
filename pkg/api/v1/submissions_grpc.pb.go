@@ -25,6 +25,7 @@ const (
 	SubmissionsService_GetByID_FullMethodName    = "/submissions.v1.SubmissionsService/GetByID"
 	SubmissionsService_ListAll_FullMethodName    = "/submissions.v1.SubmissionsService/ListAll"
 	SubmissionsService_SetRunning_FullMethodName = "/submissions.v1.SubmissionsService/SetRunning"
+	SubmissionsService_SetResult_FullMethodName  = "/submissions.v1.SubmissionsService/SetResult"
 )
 
 // SubmissionsServiceClient is the client API for SubmissionsService service.
@@ -35,6 +36,7 @@ type SubmissionsServiceClient interface {
 	GetByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*GetByIDResponse, error)
 	ListAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListAllResponse, error)
 	SetRunning(ctx context.Context, in *SetRunningRequest, opts ...grpc.CallOption) (*SetRunningResponse, error)
+	SetResult(ctx context.Context, in *SetResultRequest, opts ...grpc.CallOption) (*SetResultResponse, error)
 }
 
 type submissionsServiceClient struct {
@@ -85,6 +87,16 @@ func (c *submissionsServiceClient) SetRunning(ctx context.Context, in *SetRunnin
 	return out, nil
 }
 
+func (c *submissionsServiceClient) SetResult(ctx context.Context, in *SetResultRequest, opts ...grpc.CallOption) (*SetResultResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetResultResponse)
+	err := c.cc.Invoke(ctx, SubmissionsService_SetResult_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SubmissionsServiceServer is the server API for SubmissionsService service.
 // All implementations should embed UnimplementedSubmissionsServiceServer
 // for forward compatibility.
@@ -93,6 +105,7 @@ type SubmissionsServiceServer interface {
 	GetByID(context.Context, *GetByIDRequest) (*GetByIDResponse, error)
 	ListAll(context.Context, *emptypb.Empty) (*ListAllResponse, error)
 	SetRunning(context.Context, *SetRunningRequest) (*SetRunningResponse, error)
+	SetResult(context.Context, *SetResultRequest) (*SetResultResponse, error)
 }
 
 // UnimplementedSubmissionsServiceServer should be embedded to have
@@ -113,6 +126,9 @@ func (UnimplementedSubmissionsServiceServer) ListAll(context.Context, *emptypb.E
 }
 func (UnimplementedSubmissionsServiceServer) SetRunning(context.Context, *SetRunningRequest) (*SetRunningResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetRunning not implemented")
+}
+func (UnimplementedSubmissionsServiceServer) SetResult(context.Context, *SetResultRequest) (*SetResultResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetResult not implemented")
 }
 func (UnimplementedSubmissionsServiceServer) testEmbeddedByValue() {}
 
@@ -206,6 +222,24 @@ func _SubmissionsService_SetRunning_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SubmissionsService_SetResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SubmissionsServiceServer).SetResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SubmissionsService_SetResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SubmissionsServiceServer).SetResult(ctx, req.(*SetResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SubmissionsService_ServiceDesc is the grpc.ServiceDesc for SubmissionsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var SubmissionsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetRunning",
 			Handler:    _SubmissionsService_SetRunning_Handler,
+		},
+		{
+			MethodName: "SetResult",
+			Handler:    _SubmissionsService_SetResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

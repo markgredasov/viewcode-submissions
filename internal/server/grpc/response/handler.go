@@ -46,6 +46,8 @@ func (h *handler) GRPCError(err error, msg string) error {
 	case errors.Is(err, errs.ErrTooManyRequests):
 		statusCode = codes.ResourceExhausted
 		logFunc = h.log.Info
+	case errors.Is(err, errs.ErrConflict):
+		statusCode = codes.Aborted
 	default:
 		statusCode = codes.Internal
 		logFunc = h.log.Error

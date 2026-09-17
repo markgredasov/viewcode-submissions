@@ -13,6 +13,7 @@ service SubmissionsService {
     rpc GetByID(GetByIDRequest) returns (GetByIDResponse);
     rpc ListAll(google.protobuf.Empty) returns (ListAllResponse);
     rpc SetRunning(SetRunningRequest) returns (SetRunningResponse);
+    rpc SetResult(SetResultRequest) returns (SetResultResponse);
 }
 
 enum SubmissionStatus {
@@ -112,5 +113,23 @@ message SetRunningRequest {
 }
 
 message SetRunningResponse {
+    Submission submission = 1;
+}
+
+message SetResultRequest {
+    string id = 1 [
+        (validate.rules).string.uuid = true
+    ];
+
+    int32 tests_passed = 2;
+
+    SubmissionStatus status = 3 [
+        (validate.rules).enum = {not_in: [0]}
+    ];
+
+    int32 execution_time_ms = 4;
+}
+
+message SetResultResponse {
     Submission submission = 1;
 }
