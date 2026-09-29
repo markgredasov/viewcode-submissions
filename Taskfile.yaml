@@ -51,6 +51,16 @@ tasks:
       LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
       LOGGER_FOLDER: '{{.LOGGER_FOLDER | default "./out/logs/"}}'
 
+  app:build-up:
+    cmds:
+      - docker compose up -d --build app
+    env:
+      LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
+
+  app:build-down:
+    cmds:
+      - docker compose down app
+
   db:migrate-create:
     cmds:
       - goose postgres "host={{.POSTGRES_HOST}} user={{.POSTGRES_USER}} database={{.POSTGRES_DB}} password={{.POSTGRES_PASSWORD}} sslmode=disable" -dir {{.PROJECT_ROOT}}/migrations create {{.NAME}} sql

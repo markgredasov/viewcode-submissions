@@ -10,8 +10,7 @@ import (
 //
 // Values are loaded from environment variables with the prefix "LOGGER".
 type Config struct {
-	Level  string `envconfig:"LEVEL" required:"true"`
-	Folder string `envconfig:"FOLDER" required:"true"`
+	Level string `envconfig:"LEVEL" required:"true"`
 }
 
 // NewConfig loads logger configuration from environment variables.
