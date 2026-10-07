@@ -51,9 +51,15 @@ tasks:
       LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
       LOGGER_FOLDER: '{{.LOGGER_FOLDER | default "./out/logs/"}}'
 
-  app:build-up:
+  app:build:
     cmds:
       - docker compose up -d --build app
+    env:
+      LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
+
+  app:build-up:
+    cmds:
+      - docker compose up -d app
     env:
       LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
 

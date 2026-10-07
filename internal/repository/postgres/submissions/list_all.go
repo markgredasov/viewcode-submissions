@@ -19,6 +19,7 @@ func (r *Repository) ListAll(ctx context.Context) ([]submission.Submission, erro
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	return scanSubmissions(rows)
 }
