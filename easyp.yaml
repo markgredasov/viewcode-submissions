@@ -1,14 +1,18 @@
 lint:
     use:
         - DEFAULT
-    enum_zero_value_suffix: _UNSPECIFIED
+    except:
+        - RPC_REQUEST_STANDARD_NAME
+    enum_zero_value_suffix: UNSPECIFIED
     service_suffix: Service
     ignore:
         - github.com
+        - bin/
 
 deps:
   - github.com/bufbuild/protoc-gen-validate
   - github.com/googleapis/googleapis@common-protos-1_3_1
+
 generate:
     inputs:
       - directory: "api"
@@ -17,21 +21,19 @@ generate:
           out: ./pkg
           opts:
               paths: source_relative
+
         - name: go-grpc
           out: ./pkg
           opts:
               paths: source_relative
               require_unimplemented_servers: false
-           #  generate_unbound_methods: true
+              
         - name: protoc-gen-validate
           out: ./pkg
           opts:
               paths: source_relative
               lang: go
           
-
-# moreover, we can specify local path
-
 breaking:
     use:
         - DIRECTORY_SAME_PACKAGE

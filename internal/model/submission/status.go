@@ -19,23 +19,23 @@ const (
 )
 
 var (
-	statusModelToGRPCModel = map[Status]submissions_v1.SubmissionStatus{
-		StatusPending:     submissions_v1.SubmissionStatus_STATUS_PENDING,
-		StatusRunning:     submissions_v1.SubmissionStatus_STATUS_RUNNING,
-		StatusAccepted:    submissions_v1.SubmissionStatus_STATUS_ACCEPTED,
-		StatusWrongAnswer: submissions_v1.SubmissionStatus_STATUS_WRONG_ANSWER,
-		StatusTimeout:     submissions_v1.SubmissionStatus_STATUS_TIMEOUT,
-		StatusInternal:    submissions_v1.SubmissionStatus_STATUS_INTERNAL,
+	statusModelToGRPCModel = map[Status]submissions_v1.Status{
+		StatusPending:     submissions_v1.Status_STATUS_PENDING,
+		StatusRunning:     submissions_v1.Status_STATUS_RUNNING,
+		StatusAccepted:    submissions_v1.Status_STATUS_ACCEPTED,
+		StatusWrongAnswer: submissions_v1.Status_STATUS_WRONG_ANSWER,
+		StatusTimeout:     submissions_v1.Status_STATUS_TIMEOUT,
+		StatusInternal:    submissions_v1.Status_STATUS_INTERNAL,
 	}
 
 	//nolint:exhaustive // unspecified not needed in map
-	statusGRPCModelToModel = map[submissions_v1.SubmissionStatus]Status{
-		submissions_v1.SubmissionStatus_STATUS_PENDING:      StatusPending,
-		submissions_v1.SubmissionStatus_STATUS_RUNNING:      StatusRunning,
-		submissions_v1.SubmissionStatus_STATUS_ACCEPTED:     StatusAccepted,
-		submissions_v1.SubmissionStatus_STATUS_WRONG_ANSWER: StatusWrongAnswer,
-		submissions_v1.SubmissionStatus_STATUS_TIMEOUT:      StatusTimeout,
-		submissions_v1.SubmissionStatus_STATUS_INTERNAL:     StatusInternal,
+	statusGRPCModelToModel = map[submissions_v1.Status]Status{
+		submissions_v1.Status_STATUS_PENDING:      StatusPending,
+		submissions_v1.Status_STATUS_RUNNING:      StatusRunning,
+		submissions_v1.Status_STATUS_ACCEPTED:     StatusAccepted,
+		submissions_v1.Status_STATUS_WRONG_ANSWER: StatusWrongAnswer,
+		submissions_v1.Status_STATUS_TIMEOUT:      StatusTimeout,
+		submissions_v1.Status_STATUS_INTERNAL:     StatusInternal,
 	}
 )
 
@@ -48,7 +48,7 @@ func NewStatus(status string) (Status, error) {
 	return statusValueObject, nil
 }
 
-func ConvertStatusFromGRPC(grpcModel submissions_v1.SubmissionStatus) (Status, error) {
+func ConvertStatusFromGRPC(grpcModel submissions_v1.Status) (Status, error) {
 	statusModel, ok := statusGRPCModelToModel[grpcModel]
 	if !ok {
 		return "", fmt.Errorf("status: %s: %w", grpcModel.String(), errs.ErrInvalidArgument)
@@ -78,10 +78,10 @@ func (s Status) IsTerminal() bool {
 	return false
 }
 
-func (s Status) GRPCModel() (submissions_v1.SubmissionStatus, error) {
+func (s Status) GRPCModel() (submissions_v1.Status, error) {
 	grpcModel, ok := statusModelToGRPCModel[s]
 	if !ok {
-		return submissions_v1.SubmissionStatus_STATUS_UNSPECIFIED, fmt.Errorf("no such status: %s: %w", string(s), errs.ErrInvalidArgument)
+		return submissions_v1.Status_STATUS_UNSPECIFIED, fmt.Errorf("no such status: %s: %w", s.String(), errs.ErrInvalidArgument)
 	}
 	return grpcModel, nil
 }

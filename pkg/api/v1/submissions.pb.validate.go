@@ -267,7 +267,7 @@ var _ interface {
 	ErrorName() string
 } = SubmissionValidationError{}
 
-var _Submission_Status_NotInLookup = map[SubmissionStatus]struct{}{
+var _Submission_Status_NotInLookup = map[Status]struct{}{
 	0: {},
 }
 
@@ -1324,7 +1324,7 @@ var _ interface {
 	ErrorName() string
 } = SetResultRequestValidationError{}
 
-var _SetResultRequest_Status_NotInLookup = map[SubmissionStatus]struct{}{
+var _SetResultRequest_Status_NotInLookup = map[Status]struct{}{
 	0: {},
 }
 

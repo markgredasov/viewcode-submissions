@@ -5,9 +5,11 @@ dotenv: ['.env']
 vars:
   GO_VERSION: '1.26.3'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
+  EASYP_VERSION: "v0.17.0"
 
   BIN_DIR: '{{.ROOT_DIR}}/bin'
   GOLANGCI_LINT: '{{.BIN_DIR}}/golangci-lint'
+  EASYP: '{{.BIN_DIR}}/easyp'
   
   LOGGER_LEVEL: DEBUG
 
@@ -18,10 +20,6 @@ vars:
       else
         pwd
       fi
-
-  PROTO_PATH: 'api/v1'
-  PROTO_GO_OUT: '{{.PROJECT_ROOT}}/pkg/api/v1/submissions'
-  PROTO_GO_GRPC_OUT: '{{.PROJECT_ROOT}}/pkg/api/v1/submissions'
 
 env:
   PROJECT_ROOT: '{{.PROJECT_ROOT}}'
@@ -91,6 +89,27 @@ tasks:
     cmds:
       - docker compose down postgres
 
-  proto:gen:
+  proto:install-easyp:
+    silent: true
     cmds:
-      - easyp generate
+      - |
+        mkdir -p {{.BIN_DIR}}
+        [ -f {{.EASYP}} ] || {
+          echo "installing easyp {{.EASYP_VERSION}}"
+          GOBIN={{.BIN_DIR}} go install github.com/easyp-tech/easyp/cmd/easyp@{{.EASYP_VERSION}}
+        }
+    status:
+      - test -x {{.EASYP}}
+
+  proto:lint:
+    deps: [ proto:install-easyp ]
+    dir: proto
+    cmds:
+      - '{{.EASYP}} --config ../easyp.yaml lint'
+
+  proto:gen:
+    deps: [ proto:install-easyp, proto:lint ]
+    silent: true
+    dir: proto
+    cmds:
+      - '{{.EASYP}} --config ../easyp.yaml generate'
