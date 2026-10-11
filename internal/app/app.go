@@ -73,6 +73,7 @@ func (a *App) initGRPCServer(ctx context.Context) {
 		interceptor.Recovery(),
 		interceptor.Trace(),
 		interceptor.RateLimiter(ipLimiter),
+		interceptor.Validate(),
 	)
 
 	server.RegisterServices(a.diContainer.Methods().RegisterAll)

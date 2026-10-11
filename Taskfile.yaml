@@ -5,11 +5,13 @@ dotenv: ['.env']
 vars:
   GO_VERSION: '1.26.3'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
-  EASYP_VERSION: "v0.17.0"
+  EASYP_VERSION: 'v0.17.0'
+  PROTOC_GEN_VALIDATE_VERSION: 'v1.3.3'
 
   BIN_DIR: '{{.ROOT_DIR}}/bin'
   GOLANGCI_LINT: '{{.BIN_DIR}}/golangci-lint'
   EASYP: '{{.BIN_DIR}}/easyp'
+  PROTOC_GEN_VALIDATE: '{{.BIN_DIR}}/protoc-gen-validate'
   
   LOGGER_LEVEL: DEBUG
 
@@ -89,6 +91,15 @@ tasks:
     cmds:
       - docker compose down postgres
 
+  proto:install-plugins:
+    silent: true
+    cmds: 
+      - |
+        [ -f {{.PROTOC_GEN_VALIDATE}} ] || {
+          echo "installing protoc gen validate {{.PROTOC_GEN_VALIDATE_VERSION}}"
+          GOBIN={{.BIN_DIR}} go install github.com/envoyproxy/protoc-gen-validate@{{.PROTOC_GEN_VALIDATE_VERSION}}
+        }
+
   proto:install-easyp:
     silent: true
     cmds:
@@ -108,7 +119,7 @@ tasks:
       - '{{.EASYP}} --config ../easyp.yaml lint'
 
   proto:gen:
-    deps: [ proto:install-easyp, proto:lint ]
+    deps: [ proto:install-plugins, proto:install-easyp, proto:lint ]
     silent: true
     dir: proto
     cmds:

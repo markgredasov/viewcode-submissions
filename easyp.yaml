@@ -10,7 +10,7 @@ lint:
         - bin/
 
 deps:
-  - github.com/bufbuild/protoc-gen-validate
+  - github.com/envoyproxy/protoc-gen-validate@v1.3.3
   - github.com/googleapis/googleapis@common-protos-1_3_1
 
 generate:
@@ -29,10 +29,11 @@ generate:
               require_unimplemented_servers: false
               
         - name: protoc-gen-validate
+          local: ../bin
           out: ./pkg
           opts:
-              paths: source_relative
-              lang: go
+            paths: source_relative
+            lang: go
           
 breaking:
     use:
