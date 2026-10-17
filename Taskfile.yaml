@@ -2,6 +2,13 @@ version: '3'
 
 dotenv: ['.env']
 
+includes:
+  proto: ./taskfiles/Proto.yaml
+  app: ./taskfiles/App.yaml
+  db: ./taskfiles/Database.yaml
+  migrate: ./taskfiles/Migrate.yaml
+  lint: ./taskfiles/Lint.yaml
+
 vars:
   GO_VERSION: '1.26.3'
   GOLANGCI_LINT_VERSION: 'v2.12.2'
@@ -26,101 +33,3 @@ vars:
 env:
   PROJECT_ROOT: '{{.PROJECT_ROOT}}'
   SANDBOX_DOCKER_CONFIG_LANGUAGES_FILEPATH: '{{.PROJECT_ROOT}}/config_images.yaml'
-
-tasks:
-  app:install-golangci-lint:
-    cmds:
-     - |
-      [ -f  {{.GOLANGCI_LINT}} ] || {
-        mkdir -p {{.BIN_DIR}}
-        echo "installing golangci-lint {{.GOLANGCI_LINT_VERSION}}"
-        GOBIN={{.BIN_DIR}} go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@{{.GOLANGCI_LINT_VERSION}}
-      }
-    status:
-      - test -x {{.GOLANGCI_LINT}}
-
-  app:lint:
-    deps: [ app:install-golangci-lint ]
-    cmds:
-      - '{{.GOLANGCI_LINT}} run ./... --config=.golangci.yml'
-
-  app:run:
-    cmds:
-      - go run ./cmd/app/main.go
-    env:
-      LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
-      LOGGER_FOLDER: '{{.LOGGER_FOLDER | default "./out/logs/"}}'
-
-  app:build:
-    cmds:
-      - docker compose up -d --build app
-    env:
-      LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
-
-  app:build-up:
-    cmds:
-      - docker compose up -d app
-    env:
-      LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
-
-  app:build-down:
-    cmds:
-      - docker compose down app
-
-  db:migrate-create:
-    cmds:
-      - goose postgres "host={{.POSTGRES_HOST}} user={{.POSTGRES_USER}} database={{.POSTGRES_DB}} password={{.POSTGRES_PASSWORD}} sslmode=disable" -dir {{.PROJECT_ROOT}}/migrations create {{.NAME}} sql
-
-  db:migrate-status:
-    cmds:
-      - goose postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} database=${POSTGRES_DB} password=${POSTGRES_PASSWORD} sslmode=disable" -dir ${PROJECT_ROOT}/migrations status
-
-  db:migrate-up:
-    cmds:
-      - goose postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} database=${POSTGRES_DB} password=${POSTGRES_PASSWORD} sslmode=disable" -dir ${PROJECT_ROOT}/migrations up
-
-  db:migrate-down:
-    cmds:
-      - goose postgres "host=${POSTGRES_HOST} user=${POSTGRES_USER} database=${POSTGRES_DB} password=${POSTGRES_PASSWORD} sslmode=disable" -dir ${PROJECT_ROOT}/migrations down
-
-  db:up:
-    cmds:
-      - docker compose up -d postgres
-
-  db:down:
-    cmds:
-      - docker compose down postgres
-
-  proto:install-plugins:
-    silent: true
-    cmds: 
-      - |
-        [ -f {{.PROTOC_GEN_VALIDATE}} ] || {
-          echo "installing protoc gen validate {{.PROTOC_GEN_VALIDATE_VERSION}}"
-          GOBIN={{.BIN_DIR}} go install github.com/envoyproxy/protoc-gen-validate@{{.PROTOC_GEN_VALIDATE_VERSION}}
-        }
-
-  proto:install-easyp:
-    silent: true
-    cmds:
-      - |
-        mkdir -p {{.BIN_DIR}}
-        [ -f {{.EASYP}} ] || {
-          echo "installing easyp {{.EASYP_VERSION}}"
-          GOBIN={{.BIN_DIR}} go install github.com/easyp-tech/easyp/cmd/easyp@{{.EASYP_VERSION}}
-        }
-    status:
-      - test -x {{.EASYP}}
-
-  proto:lint:
-    deps: [ proto:install-easyp ]
-    dir: proto
-    cmds:
-      - '{{.EASYP}} --config ../easyp.yaml lint'
-
-  proto:gen:
-    deps: [ proto:install-plugins, proto:install-easyp, proto:lint ]
-    silent: true
-    dir: proto
-    cmds:
-      - '{{.EASYP}} --config ../easyp.yaml generate'

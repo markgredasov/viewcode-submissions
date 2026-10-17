@@ -1,0 +1,39 @@
+version: '3'
+
+silent: true
+
+tasks:
+  install-plugins:
+    desc: "Установить плагины в bin"
+    cmds: 
+      - |
+        [ -f {{.PROTOC_GEN_VALIDATE}} ] || {
+          echo "installing protoc gen validate {{.PROTOC_GEN_VALIDATE_VERSION}}"
+          GOBIN={{.BIN_DIR}} go install github.com/envoyproxy/protoc-gen-validate@{{.PROTOC_GEN_VALIDATE_VERSION}}
+        }
+
+  install-easyp:
+    desc: "Установить easyp в bin"
+    cmds:
+      - |
+        mkdir -p {{.BIN_DIR}}
+        [ -f {{.EASYP}} ] || {
+          echo "installing easyp {{.EASYP_VERSION}}"
+          GOBIN={{.BIN_DIR}} go install github.com/easyp-tech/easyp/cmd/easyp@{{.EASYP_VERSION}}
+        }
+    status:
+      - test -x {{.EASYP}}
+
+  lint:
+    desc: "Запустить проверку прото-файлов на соответствие линтерам"
+    deps: [ install-easyp ]
+    dir: proto
+    cmds:
+      - '{{.EASYP}} --config ../easyp.yaml lint'
+
+  gen:
+    desc: "Сгенерировать код на основе прото-файлов"
+    deps: [ install-plugins, install-easyp, lint ]
+    dir: proto
+    cmds:
+      - '{{.EASYP}} --config ../easyp.yaml generate'

@@ -1,0 +1,23 @@
+version: '3'
+
+env: 
+  LOGGER_LEVEL: '{{.LOGGER_LEVEL}}'
+
+tasks:
+  run:
+    desc: "Запустить приложение viewcode-submissions"
+    cmds:
+      - go run ./cmd/app/main.go
+
+  build:
+    desc: "Принудительно пересобрать приложение в docker-образ и запустить"
+    cmds:
+      - docker compose up -d --build app
+
+  build-up:
+    desc: "Собрать приложение в docker-образ и запустить. Если образ уже есть - просто запустить"
+    cmds:
+      - docker compose up -d app
+
+  build-down:
+    desc: "Завершить работу контейнера"

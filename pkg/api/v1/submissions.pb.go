@@ -723,7 +723,7 @@ var File_api_v1_submissions_proto protoreflect.FileDescriptor
 
 const file_api_v1_submissions_proto_rawDesc = "" +
 	"\n" +
-	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x17validate/validate.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xd2\x03\n" +
+	"\x18api/v1/submissions.proto\x12\x0esubmissions.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x17validate/validate.proto\"\xd2\x03\n" +
 	"\n" +
 	"Submission\x12\x18\n" +
 	"\x02id\x18\x01 \x01(\tB\b\xfaB\x05r\x03\xb0\x01\x01R\x02id\x12!\n" +
