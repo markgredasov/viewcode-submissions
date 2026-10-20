@@ -3,7 +3,7 @@ package submissionsrepository
 import (
 	"context"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
 func (r *Repository) Create(ctx context.Context, submission submission.Submission) (submission.Submission, error) {

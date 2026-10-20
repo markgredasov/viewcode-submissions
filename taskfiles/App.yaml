@@ -21,3 +21,5 @@ tasks:
 
   build-down:
     desc: "Завершить работу контейнера"
+    cmds:
+      - docker compose down app

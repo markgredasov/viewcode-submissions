@@ -3,7 +3,7 @@ package submissionsrepository
 import (
 	"context"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
 func (r *Repository) ListAll(ctx context.Context) ([]submission.Submission, error) {

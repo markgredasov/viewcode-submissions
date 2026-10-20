@@ -2,13 +2,13 @@ package submissionsservice
 
 import (
 	"context"
+	"uuid"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
 func (s *Service) GetByID(ctx context.Context, id string) (submission.Submission, error) {
-	uid, err := model.ToUUID(id)
+	uid, err := uuid.Parse(id)
 	if err != nil {
 		return submission.Submission{}, err
 	}

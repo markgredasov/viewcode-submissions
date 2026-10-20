@@ -2,12 +2,12 @@ package submissionsrepository
 
 import (
 	"context"
+	"uuid"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
-func (r *Repository) UpdateStatus(ctx context.Context, id model.UUID, status submission.Status,
+func (r *Repository) UpdateStatus(ctx context.Context, id uuid.UUID, status submission.Status,
 	testsPassed int, executionTimeInMS int) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()

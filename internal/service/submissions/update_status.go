@@ -2,14 +2,14 @@ package submissionsservice
 
 import (
 	"context"
+	"uuid"
 
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
 func (s *Service) SetRunning(ctx context.Context, id string) (submission.Submission, error) {
-	uid, err := model.ToUUID(id)
+	uid, err := uuid.Parse(id)
 	if err != nil {
 		return submission.Submission{}, err
 	}
@@ -41,7 +41,7 @@ func (s *Service) SetRunning(ctx context.Context, id string) (submission.Submiss
 }
 
 func (s *Service) SetResult(ctx context.Context, id string, next submission.Status, testsPassed int32, executionTimeInMS int32) (submission.Submission, error) {
-	uid, err := model.ToUUID(id)
+	uid, err := uuid.Parse(id)
 	if err != nil {
 		return submission.Submission{}, err
 	}

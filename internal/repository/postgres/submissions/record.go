@@ -2,9 +2,10 @@ package submissionsrepository
 
 import (
 	"time"
+	"uuid"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
 type record struct {
@@ -21,7 +22,7 @@ type record struct {
 }
 
 func toModel(r record) (submission.Submission, error) {
-	languageModel, err := model.NewLanguage(r.Language)
+	languageModel, err := domain.NewLanguage(r.Language)
 	if err != nil {
 		return submission.Submission{}, err
 	}
@@ -31,7 +32,7 @@ func toModel(r record) (submission.Submission, error) {
 		return submission.Submission{}, err
 	}
 
-	uid, err := model.ToUUID(r.ID)
+	uid, err := uuid.Parse(r.ID)
 	if err != nil {
 		return submission.Submission{}, err
 	}

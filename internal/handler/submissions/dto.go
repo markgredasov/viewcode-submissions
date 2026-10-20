@@ -1,14 +1,14 @@
 package submissionshandler
 
 import (
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 	submissions_v1 "github.com/markgredasov/viewcode-submissions/pkg/api/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func createToSubmission(req *submissions_v1.CreateRequest) (submission.Submission, error) {
-	languageModel, err := model.NewLanguageFromGRPC(req.GetLanguage())
+	languageModel, err := domain.NewLanguageFromGRPC(req.GetLanguage())
 	if err != nil {
 		return submission.Submission{}, err
 	}

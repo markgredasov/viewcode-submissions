@@ -3,8 +3,8 @@ package submissionshandler
 import (
 	"context"
 
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 	"github.com/markgredasov/viewcode-submissions/internal/logger"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 	"github.com/markgredasov/viewcode-submissions/internal/server/grpc/response"
 	submissions_v1 "github.com/markgredasov/viewcode-submissions/pkg/api/v1"
 )

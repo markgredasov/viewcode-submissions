@@ -3,9 +3,10 @@ package submission
 import (
 	"slices"
 	"time"
+	"uuid"
 
+	domain "github.com/markgredasov/viewcode-submissions/internal/domain"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
-	"github.com/markgredasov/viewcode-submissions/internal/model"
 )
 
 const (
@@ -14,13 +15,13 @@ const (
 )
 
 type Submission struct {
-	ID                model.UUID
-	UserID            model.UUID
-	ProblemID         model.UUID
+	ID                uuid.UUID
+	UserID            uuid.UUID
+	ProblemID         uuid.UUID
 	TestsTotal        int
 	TestsPassed       int
 	Status            Status
-	Language          model.Language
+	Language          domain.Language
 	ExecutionTimeInMS int
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
@@ -31,17 +32,17 @@ func New(
 	problemID string,
 	testsTotal int,
 	testsPassed int,
-	language model.Language,
+	language domain.Language,
 	executionTimeInMs int,
 ) (Submission, error) {
-	id := model.NewUUID()
+	id := uuid.New()
 
-	userIDValueObject, err := model.ToUUID(userID)
+	userIDValueObject, err := uuid.Parse(userID)
 	if err != nil {
 		return Submission{}, err
 	}
 
-	problemIDValueObject, err := model.ToUUID(problemID)
+	problemIDValueObject, err := uuid.Parse(problemID)
 	if err != nil {
 		return Submission{}, err
 	}
@@ -58,7 +59,7 @@ func New(
 	}, nil
 }
 
-func (s *Submission) WithID(id model.UUID) *Submission {
+func (s *Submission) WithID(id uuid.UUID) *Submission {
 	s.ID = id
 	return s
 }

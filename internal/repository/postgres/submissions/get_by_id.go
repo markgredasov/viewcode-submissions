@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"uuid"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
-func (r *Repository) GetByID(ctx context.Context, id model.UUID) (submission.Submission, error) {
+func (r *Repository) GetByID(ctx context.Context, id uuid.UUID) (submission.Submission, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 

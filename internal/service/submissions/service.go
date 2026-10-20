@@ -2,9 +2,9 @@ package submissionsservice
 
 import (
 	"context"
+	"uuid"
 
-	"github.com/markgredasov/viewcode-submissions/internal/model"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 )
 
 type Service struct {
@@ -14,9 +14,9 @@ type Service struct {
 
 type SubmissionsRepository interface {
 	Create(ctx context.Context, submission submission.Submission) (submission.Submission, error)
-	GetByID(ctx context.Context, id model.UUID) (submission.Submission, error)
+	GetByID(ctx context.Context, id uuid.UUID) (submission.Submission, error)
 	ListAll(ctx context.Context) ([]submission.Submission, error)
-	UpdateStatus(ctx context.Context, id model.UUID, status submission.Status, testsPassed int, executionTimeInMS int) (submission.Submission, error)
+	UpdateStatus(ctx context.Context, id uuid.UUID, status submission.Status, testsPassed int, executionTimeInMS int) (submission.Submission, error)
 }
 
 type TxManager interface {

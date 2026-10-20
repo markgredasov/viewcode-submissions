@@ -1,6 +1,6 @@
 module github.com/markgredasov/viewcode-submissions
 
-go 1.26.5
+go 1.27.0
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.3.3

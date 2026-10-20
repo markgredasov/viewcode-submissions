@@ -3,8 +3,8 @@ package submissionsrepository
 import (
 	"github.com/jackc/pgx/v5"
 	dbpostgres "github.com/markgredasov/viewcode-submissions/internal/database/postgres"
+	"github.com/markgredasov/viewcode-submissions/internal/domain/submission"
 	errs "github.com/markgredasov/viewcode-submissions/internal/errors"
-	"github.com/markgredasov/viewcode-submissions/internal/model/submission"
 )
 
 type Repository struct {
